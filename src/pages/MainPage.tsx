@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import InputBase from "@material-ui/core/InputBase";
 import { useHistory } from "react-router-dom";
 import { Button, withStyles, Theme, createStyles } from "@material-ui/core";
-import { useUserState, useUserStateDispatch } from "../contexts/UserContext";
+import { useUserState } from "../contexts/UserContext";
 
 const electron = window.require("electron");
 const ipcRenderer = electron.ipcRenderer;
@@ -21,12 +21,14 @@ function MainPageComponent() {
   const [input, setInput] = useState<string>("");
   const userState = useUserState();
   const history = useHistory();
-  // const userStateContext = useContext(UserStateContext);
   const handleLogin = () => {
-    history.push("/login");
+    history.replace("/login");
   };
   const handleAbout = () => {
-    history.push("/about");
+    history.replace("/about");
+  };
+  const handleSetting = () => {
+    history.replace("/setting");
   };
   const handleInputChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -46,22 +48,27 @@ function MainPageComponent() {
       <div>
         엑스칼리버에 오신 것을 환영합니다.
         <br />
-        이즈로그인드 : {userState.isLogin === false ? "폴스" : userState.id}
+        isLogin : {userState.isLogin === false ? "로그인 안 함" : userState.id}
       </div>
       <div className="App-buttons">
         <Button variant="contained" color="primary" onClick={handleLogin}>
-          로그인
+          로그인 / 가입
         </Button>
         <Button variant="contained" onClick={handleAbout}>
           엑스칼리버에 대하여...
         </Button>
+        <Button variant="contained" color="secondary" onClick={handleSetting}>
+          환경설정
+        </Button>
+        {/* 이곳에 파이썬 코드 입력 */}
         <BootstrapInput
           id="bootstrap-input"
           value={input}
+          placeholder={"이곳에 파이썬 코드를 입력하세요..."}
           onChange={handleInputChange}
         />
         <Button variant="contained" onClick={handleExecPythonCode}>
-          실행
+          코드 실행(결과는 콘솔에 표시됩니다.)
         </Button>
       </div>
     </header>

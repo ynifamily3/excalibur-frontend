@@ -2,57 +2,44 @@ import React, { useEffect, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Box, Grid } from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-
-import { useUserState, useUserStateDispatch } from "../contexts/UserContext";
+import { useUserState } from "../contexts/UserContext";
 
 const electron = window.require("electron");
 const ipcRenderer = electron.ipcRenderer;
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-  })
-);
-
 function StudentPage() {
   const history = useHistory();
-  const classes = useStyles();
   const userState = useUserState();
 
   const handleBack = () => {
-    // 디버깅 시에 자꾸 깜빡이긴한데 실서비스엔 문제 없겠지?
-    history.push("/");
+    history.replace("/");
   };
 
-  const [age, setAge] = React.useState("");
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAge(event.target.value as string);
-  };
-  const [enabled, setEnabled] = useState<boolean>(false);
+  const [camera, setCamera] = React.useState("");
+  const [microphone, setMicrophone] = React.useState("");
   const [cameraes, setCameraes] = useState<MediaDeviceInfo[]>([]);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
-  const camEl = useRef(null);
+  const handleChangeCameraes = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setCamera(event.target.value as string);
+  };
+  const handleChangeMicrophones = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setMicrophone(event.target.value as string);
+  };
+  const [enabled, setEnabled] = useState<boolean>(true);
+
+  const camEl = useRef<HTMLVideoElement>(null);
   const handleCameraToggle = () => {
     setEnabled(!enabled);
     if (!enabled === true) {
-      // 카메라를 켜야 됨
-      // WebCamera.attach(camEl.current);
+      // TODO: 카메라를 켜야 됨
     } else {
-      // 카메라를 꺼야 됨
-      // WebCamera.reset();
+      // TODO: 카메라를 꺼야 됨
     }
   };
   useEffect(() => {
@@ -62,9 +49,43 @@ function StudentPage() {
   // get camera
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
-      setCameraes(devices.filter((x) => x.kind === "videoinput"));
+      const cameraes = devices.filter((x) => x.kind === "videoinput");
+      const microphones = devices.filter((x) => x.kind === "audioinput");
+      cameraes.length > 0 && setCamera("0");
+      microphones.length > 0 && setMicrophone("0");
+      setCameraes(cameraes);
+      setMicrophones(microphones);
     });
-  }, [camEl]);
+  }, [camEl]); // camEl dep 존재 필요여부 파악
+
+  // play camera if changed
+  useEffect(() => {
+    let _stream: MediaStream;
+    if (camera.length === 0 || cameraes.length === 0) return;
+    navigator.getUserMedia(
+      {
+        video: {
+          deviceId: cameraes[+camera].deviceId,
+        },
+        audio: false,
+      },
+      function (stream) {
+        _stream = stream;
+        const { current } = camEl;
+        if (current !== null) {
+          current.srcObject = stream;
+        }
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+    return function cleanUp() {
+      _stream.getTracks().forEach(function (track) {
+        track.stop(); // 카메라 추적을 중단한다.
+      });
+    };
+  }, [camera, cameraes]);
   return (
     <Box p={1}>
       <Grid container spacing={3}>
@@ -75,8 +96,8 @@ function StudentPage() {
         </Grid>
         <Grid item xs={6}>
           <code>
-            학생 페이지 이즈로그인 :{" "}
-            {userState.isLogin === false ? "폴스" : userState.id}
+            로그인 여부:{" "}
+            {userState.isLogin === false ? "로그아웃 상태" : userState.id}
           </code>
         </Grid>
         <Grid item xs={6}>
@@ -86,31 +107,57 @@ function StudentPage() {
           마이크
         </Grid>
         <Grid item xs={6}>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={age}
-              onChange={handleChange}
-            >
-              {cameraes.map((x, i) => {
-                return <MenuItem value={i}>{x.label}</MenuItem>;
-              })}
-            </Select>
-          </FormControl>
+          <Select native value={camera} onChange={handleChangeCameraes}>
+            {cameraes.map((x, i) => {
+              return (
+                <option key={x.label + i} value={i}>
+                  {x.label}
+                </option>
+              );
+            })}
+          </Select>
         </Grid>
         <Grid item xs={6}>
-          마이크드롭다운
+          <Select native value={microphone} onChange={handleChangeMicrophones}>
+            {microphones.map((x, i) => {
+              return (
+                <option key={x.label + i} value={i}>
+                  {x.label}
+                </option>
+              );
+            })}
+          </Select>
         </Grid>
         <Grid item xs={12}>
           <video
+            style={
+              !enabled
+                ? {
+                    display: "none",
+                  }
+                : {
+                    display: "block",
+                  }
+            }
             ref={camEl}
             id="video"
-            height="480"
-            width="800"
+            height="150px"
+            width="100%"
             autoPlay
           ></video>
+          <div
+            id="box"
+            style={{
+              width: "100%",
+              height: "150px",
+              display: enabled ? "none" : "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              border: "1px solid",
+            }}
+          >
+            비디오 숨겨짐
+          </div>
         </Grid>
         <Grid item xs={12}>
           <Button

@@ -1,18 +1,16 @@
 import React, { useEffect } from "react";
 import { Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+const electron = window.require("electron");
+const ipcRenderer = electron.ipcRenderer;
 
 function AboutPageComponent() {
   const history = useHistory();
   const handleBack = () => {
-    // 디버깅 시에 자꾸 깜빡이긴한데 실서비스엔 문제 없겠지?
-    if (history.length > 1) history.goBack();
-    else history.push("/");
+    history.replace("/");
   };
 
   useEffect(() => {
-    const electron = window.require("electron");
-    const ipcRenderer = electron.ipcRenderer;
     ipcRenderer.send("resize", { x: 800, y: 600 });
   }, []);
 

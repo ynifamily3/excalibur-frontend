@@ -10,11 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { useHistory } from "react-router-dom";
-import {
-  useUserState,
-  useUserStateDispatch,
-  RoleType,
-} from "../contexts/UserContext";
+import { useUserStateDispatch, RoleType } from "../contexts/UserContext";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +18,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexWrap: "wrap",
       "& > *": {
-        // margin: theme.spacing(1),
         padding: theme.spacing(3),
         width: theme.spacing(64),
         height: theme.spacing(48),
@@ -35,26 +30,19 @@ const useStyles = makeStyles((theme: Theme) =>
 function LoginPageComponent() {
   const classes = useStyles();
   const history = useHistory();
-  // const userStateContext = useContext(UserStateContext);
   const [value, setValue] = React.useState<RoleType>("teacher");
   const dispatch = useUserStateDispatch();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = (event.target as HTMLInputElement).value;
-
-    if (value === "" || value === "student" || value === "teacher")
-      setValue(value);
+    setValue(value as RoleType); // 라디오 버튼이므로 타입에 확신을 가진다.
   };
   const handleBack = () => {
-    // 디버깅 시에 자꾸 깜빡이긴한데 실서비스엔 문제 없겠지?
-    history.push("/");
+    history.replace("/");
   };
 
   const handleLogin = () => {
-    // userStateContext.setID && userStateContext.setID("test" + Math.random());
     if (value === "teacher") {
-      // 교수자 대시보드로 로긴
     } else {
-      // 학생 대시보드로 로긴
       dispatch({
         type: "LOGIN",
         isLogin: true,
@@ -62,7 +50,7 @@ function LoginPageComponent() {
         password: "패스워드",
         role: value,
       });
-      history.push("/student");
+      history.replace("/student");
     }
   };
 
