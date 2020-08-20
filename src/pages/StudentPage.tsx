@@ -81,9 +81,11 @@ function StudentPage() {
       }
     );
     return function cleanUp() {
-      _stream.getTracks().forEach(function (track) {
-        track.stop(); // 카메라 추적을 중단한다.
-      });
+      if (_stream) {
+        _stream.getTracks().forEach(function (track) {
+          track.stop(); // 카메라 추적을 중단한다.
+        });
+      }
     };
   }, [camera, cameraes]);
   return (
