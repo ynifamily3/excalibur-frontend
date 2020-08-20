@@ -23,7 +23,6 @@ const UserStateDispatchContext = createContext<UserStateDispatch | undefined>(
 );
 
 function UserStateReducer(state: UserState, action: Action): UserState {
-  console.log("액션 !!", action, state);
   switch (action.type) {
     case "LOGIN":
       return {

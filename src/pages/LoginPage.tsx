@@ -41,15 +41,16 @@ function LoginPageComponent() {
   };
 
   const handleLogin = () => {
+    dispatch({
+      type: "LOGIN",
+      isLogin: true,
+      id: "아이디",
+      password: "패스워드",
+      role: value,
+    });
     if (value === "teacher") {
+      history.replace("/teacher");
     } else {
-      dispatch({
-        type: "LOGIN",
-        isLogin: true,
-        id: "아이디",
-        password: "패스워드",
-        role: value,
-      });
       history.replace("/student");
     }
   };
