@@ -1,4 +1,10 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Notification,
+  NotificationConstructorOptions,
+} from "electron";
 import * as isDev from "electron-is-dev";
 import * as path from "path";
 import { PythonShell } from "python-shell";
@@ -35,6 +41,16 @@ function createWindow() {
       if (error) throw error;
       console.log(output);
     });
+  });
+
+  ipcMain.on("saveFile", (event, args) => {
+    // console.log(args);
+    const myNotification = new Notification({
+      title: "아인",
+      subtitle: "맥에서만",
+      body: " 내용입니다.",
+    });
+    myNotification.show();
   });
 
   if (isDev) {
