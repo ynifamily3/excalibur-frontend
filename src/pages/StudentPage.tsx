@@ -5,6 +5,7 @@ import Fab from "@material-ui/core/Fab";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import Select from "@material-ui/core/Select";
 import { useUserState } from "../contexts/UserContext";
+var MediaStreamRecorder = require("msr"); // 카메라 레코더 (no type)
 
 const electron = window.require("electron");
 const ipcRenderer = electron.ipcRenderer;
@@ -61,6 +62,7 @@ function StudentPage() {
   // play camera if changed
   useEffect(() => {
     let _stream: MediaStream;
+    let _mediaRecorder: any;
     if (camera.length === 0 || cameraes.length === 0) return;
     navigator.getUserMedia(
       {
@@ -70,10 +72,24 @@ function StudentPage() {
         audio: false,
       },
       function (stream) {
+        // on Success Function
         _stream = stream;
         const { current } = camEl;
         if (current !== null) {
+          console.log("스트림: ", stream);
           current.srcObject = stream;
+          // 5초마다 동영상 저장하는 액션 실행
+          const mediaRecorder = new MediaStreamRecorder(stream);
+          _mediaRecorder = mediaRecorder;
+          mediaRecorder.mimeType = "video/mp4";
+          mediaRecorder.ondataavailable = function (blob: Blob) {
+            // POST/PUT "Blob" using FormData/XHR2
+            const blobURL = URL.createObjectURL(blob);
+            console.log(blobURL);
+            ipcRenderer.send("saveFile", { blobURL, fileName: "test.mp4" });
+            // mediaRecorder.save(blob, `test.mp4`);
+          };
+          mediaRecorder.start(5000); // 5초마다 영상 녹화
         }
       },
       function (error) {
@@ -81,6 +97,9 @@ function StudentPage() {
       }
     );
     return function cleanUp() {
+      if (_mediaRecorder) {
+        _mediaRecorder.stop();
+      }
       if (_stream) {
         _stream.getTracks().forEach(function (track) {
           track.stop(); // 카메라 추적을 중단한다.
