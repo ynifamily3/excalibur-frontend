@@ -22,6 +22,8 @@ function StudentPage() {
   const [microphone, setMicrophone] = React.useState("");
   const [cameraes, setCameraes] = useState<MediaDeviceInfo[]>([]);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
+  const [procList, setProcList] = useState<string[]>([]);
+
   const handleChangeCameraes = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
@@ -44,7 +46,32 @@ function StudentPage() {
     }
   };
   useEffect(() => {
-    ipcRenderer.send("resize", { x: 360, y: 500 });
+    ipcRenderer.send("resize", { x: 370, y: 700 });
+  }, []);
+
+  // 프로세스 리스트를 요청 & 받아옴
+  useEffect(() => {
+    // getProcListReply
+    ipcRenderer.on("getProcListReply", (event, args) => {
+      console.log(args);
+      args.sort((a: any, b: any) => {
+        if (a.cpu > b.cpu) {
+          return -1;
+        }
+        if (a.cpu < b.cpu) {
+          return 1;
+        }
+        return 0;
+      });
+
+      setProcList(
+        args.map((x: any) => {
+          var last = x.cmd.split("/");
+          return last[last.length - 1];
+        })
+      );
+    });
+    ipcRenderer.send("getProcList"); // 나중엔 이걸 지속적으로 수행해야됨.
   }, []);
 
   // get camera
@@ -89,7 +116,7 @@ function StudentPage() {
             ipcRenderer.send("saveFile", { blobURL, fileName: "test.mp4" });
             // mediaRecorder.save(blob, `test.mp4`);
           };
-          mediaRecorder.start(5000); // 5초마다 영상 녹화
+          // mediaRecorder.start(5000); // 5초마다 영상 녹화
         }
       },
       function (error) {
@@ -194,6 +221,14 @@ function StudentPage() {
           <Button fullWidth variant="outlined">
             로그아웃
           </Button>
+        </Grid>
+        <Grid item xs={12}>
+          상위 프로세스 리스트
+          <ul>
+            {procList.map((x, i) => {
+              return <li key={x + i}>{x}</li>;
+            })}
+          </ul>
         </Grid>
       </Grid>
     </Box>
