@@ -9,6 +9,8 @@ import * as isDev from "electron-is-dev";
 import * as path from "path";
 import { PythonShell } from "python-shell";
 import * as fs from "fs";
+const psList = require("ps-list");
+// import psList from "ps-list";
 
 // TODO: electron-reloader를 작동시킨다.
 // try {
@@ -44,13 +46,28 @@ function createWindow() {
   });
 
   ipcMain.on("saveFile", (event, args) => {
-    // console.log(args);
     const myNotification = new Notification({
       title: "아인",
       subtitle: "맥에서만",
       body: " 내용입니다.",
     });
     myNotification.show();
+  });
+
+  ipcMain.on("getProcList", (event, args) => {
+    const myNotification = new Notification({
+      title: "프로세스 분석",
+      body: "겟 프락 리스트",
+    });
+    myNotification.show();
+    psList().then(
+      (value: any) => {
+        event.sender.send("getProcListReply", value);
+      },
+      (error: any) => {
+        event.sender.send("getProcListReply", error);
+      }
+    );
   });
 
   if (isDev) {
