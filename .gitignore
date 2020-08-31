@@ -24,3 +24,10 @@ yarn-error.log*
 
 /dev/log.txt
 public/electron.js
+dist/
+node_modules
+yarn-error.log
+**/.DS_Store
+**/._.DS_Store
+.DS_Store
+._.DS_Store
