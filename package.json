@@ -2,12 +2,30 @@
   "name": "excalibur-client-r",
   "version": "0.1.0",
   "license": "MIT",
-  "main": "./dist/electron.js",
+  "main": "./dist/main.bundle.js",
   "scripts": {
-    "electron:dev": "tsc ./src/electron.ts --outDir ./dist",
-    "react:dev": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" NODE_ENV=development webpack-dev-server --hot --config webpack.config.ts",
-    "waiton:dev": "wait-on http://localhost:3000 && electron .",
-    "start": "yarn electron:dev && concurrently \"yarn react:dev\"  \"yarn waiton:dev\""
+    "dev": "rimraf dist && cross-env NODE_ENV=development webpack-dev-server --hot",
+    "start": "concurrently \"yarn dev\" \"wait-on http://localhost:3000 && electron ./dist/main.bundle.js\" -k",
+    "prod": "rimraf dist && cross-env NODE_ENV=production webpack --progress --colors",
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register \"test/**/*.ts\"",
+    "build:win": "electron-builder build --win --x64",
+    "build:mac": "electron-builder build --mac --x64"
+  },
+  "build": {
+    "appId": "dev.miel.excalibur",
+    "productName": "Excalibur Client",
+    "directories": {
+      "app": "./dist/",
+      "output": "./out/"
+    },
+    "mac": {
+      "target": "pkg"
+    },
+    "win": {
+      "target": "nsis",
+      "asar": false
+    },
+    "buildVersion": "0.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -28,15 +46,27 @@
     "typescript": "^4.0.2",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.1.3"
   },
   "dependencies": {
     "@types/react": "^16.9.48",
     "@types/react-dom": "^16.9.8",
     "concurrently": "^5.3.0",
+    "copy-pkg-json-webpack-plugin": "^0.0.39",
+    "css-loader": "^4.2.2",
+    "dotenv": "^8.2.0",
+    "electron-builder": "^22.8.0",
     "electron-reload": "^1.5.0",
+    "electron-store": "^6.0.0",
+    "file-loader": "^6.1.0",
+    "lodash": "^4.17.20",
+    "mocha": "^8.1.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "recoil": "^0.0.10",
+    "rimraf": "^3.0.2",
+    "style-loader": "^1.2.1",
     "ts": "^0.2.2",
     "wait-on": "^5.2.0"
   }
