@@ -1,27 +1,19 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
     "allowJs": true,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "*": ["node_modules/*"]
+    },
+    "jsx": "react"
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
-    "src/setupTests.ts",
-    "dist"
-  ],
-  "types": ["typePatches"]
+  "include": ["src/**/*"]
 }
