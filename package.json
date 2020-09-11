@@ -1,8 +1,8 @@
 {
-  "name": "my-new-app",
-  "productName": "my-new-app",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "excalibur-client",
+  "productName": "excalibur-client",
+  "version": "0.0.1",
+  "description": "엑스칼리버 클라이언트",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "my_new_app"
+            "name": "excalibur_client"
           }
         },
         {
