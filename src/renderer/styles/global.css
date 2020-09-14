@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: Youth;
-  src: local(Youth), url(assets/Youth.otf) format("opentype");
+  src: url(assets/Youth.ttf) format("truetype");
 }
 
 body {
