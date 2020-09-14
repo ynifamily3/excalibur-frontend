@@ -6,9 +6,11 @@ const Button = styled.button`
   margin: 1em;
   padding: 0.25em 1em;
   border-radius: 3px;
-
   color: ${(props: ButtonProps) => props.color};
   border: 2px solid ${(props: ButtonProps) => props.color};
+  &:active {
+    transform: translateY(1px);
+  }
 `;
 
 export default Button;

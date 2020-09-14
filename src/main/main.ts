@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
+import path from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -29,24 +30,51 @@ ipcMain.on("notification", (event, argument) => {
   });
 });
 
+ipcMain.on("alwaysOnTopActivate", () => {
+  mainWindow.setAlwaysOnTop(true);
+});
+
+ipcMain.on("alwaysOnTopDeActivate", () => {
+  mainWindow.setAlwaysOnTop(false);
+});
+
+ipcMain.on("closeMainWindow", () => {
+  mainWindow.close();
+});
+
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
-    height: 600,
+    frame: false,
+    autoHideMenuBar: true,
+    // alwaysOnTop: true,
     width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600,
+    icon: path.join(__dirname, "assets/excalibur.ico"),
     webPreferences: {
       nodeIntegration: true,
+      preload: __dirname + "/preload.js",
     },
   });
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   isDev && mainWindow.webContents.openDevTools();
+
+  //
+  mainWindow.on("blur", () => {
+    // mainWindow.setOpacity(0.5);
+  });
+  mainWindow.on("focus", () => {
+    // mainWindow.setOpacity(1);
+  });
 };
 
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  // if (process.platform !== "darwin") {
+  app.quit();
+  // }
 });
 
 app.on("activate", () => {
