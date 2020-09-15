@@ -1,7 +1,6 @@
 import { hot } from "react-hot-loader";
 import React, { useState } from "react";
 import { ipcRenderer } from "electron";
-import { RecoilRoot } from "recoil";
 import "normalize.css";
 import "styles/global.css";
 import PinButton from "components/atoms/PinButton";
@@ -17,7 +16,7 @@ const About = React.lazy(() => import("pages/About"));
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
   return (
-    <RecoilRoot>
+    <>
       <div id="dragabletop" />
       <Titlebar />
       <Hover
@@ -42,7 +41,7 @@ function App() {
         <Route exact path="/" component={WaitingComponent(Intro)} />
         <Route exact path="/about" component={WaitingComponent(About)} />
       </MemoryRouter>
-    </RecoilRoot>
+    </>
   );
 }
 

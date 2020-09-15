@@ -1,5 +1,39 @@
+import Button from "components/atoms/Button";
 import React from "react";
+import { useHistory } from "react-router-dom";
+import styled from "styled-components";
+const Wrapper = styled.div`
+  margin-top: 7em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const H1 = styled.h1`
+  text-align: center;
+  margin: 0;
+  padding: 0;
+`;
 
 export default function About(): JSX.Element {
-  return <div>About페이지.</div>;
+  const history = useHistory();
+  return (
+    <Wrapper>
+      <H1>소개 페이지입니다.</H1>
+      <Button
+        onClick={() => {
+          history.replace("/");
+        }}
+        color="red"
+        style={{
+          marginTop: "20em",
+          width: "10em",
+          paddingTop: "1em",
+          paddingBottom: "1em",
+        }}
+      >
+        로그아웃
+      </Button>
+    </Wrapper>
+  );
 }

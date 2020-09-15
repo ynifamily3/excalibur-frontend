@@ -9,7 +9,7 @@
     "package": "cross-env NODE_ENV=production electron-forge package",
     "make": "cross-env NODE_ENV=production electron-forge make",
     "publish": "cross-env NODE_ENV=production electron-forge publish",
-    "lint": "eslint --ext .ts ."
+    "lint": "eslint --ext .ts --ext .tsx ."
   },
   "keywords": [],
   "author": {
@@ -42,14 +42,6 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-wix",
-          "config": {
-            "ui": {
-              "chooseDirectory": true
-            }
-          }
         }
       ],
       "plugins": [
@@ -108,6 +100,7 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
+    "@reduxjs/toolkit": "^1.4.0",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
     "axios": "^0.20.0",
@@ -119,7 +112,6 @@
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
     "react-router-dom": "^5.2.0",
-    "recoil": "^0.0.10",
     "styled-components": "^5.2.0"
   },
   "resolutions": {
