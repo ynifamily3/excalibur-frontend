@@ -82,13 +82,6 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   isDev && mainWindow.webContents.openDevTools();
 
-  //
-  mainWindow.on("blur", () => {
-    // mainWindow.setOpacity(0.5);
-  });
-  mainWindow.on("focus", () => {
-    // mainWindow.setOpacity(1);
-  });
   mainWindow.on("close", (event) => {
     if (!isQuiting) {
       event.preventDefault();
@@ -99,29 +92,23 @@ const createWindow = (): void => {
 
 app.on("ready", createWindow);
 
-app.on("window-all-closed", () => {
-  // if (process.platform !== "darwin") {
-  // app.quit();
-  // }
-});
-
 app.on("activate", () => {
   mainWindow.show();
 });
 
-if (isDev) {
-  console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
-  console.log(
-    "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
+app.whenReady().then(() => {
+  trayIcon = new Tray(
+    "./assets/excalibur.png",
+    "excalibur-swordmaster-client-my-guid"
   );
-  app.whenReady().then(() => {
-    trayIcon = new Tray(
-      "./assets/excalibur.png",
-      "excalibur-swordmaster-client-my-guid"
+  trayIcon.setContextMenu(contextMenu);
+  if (isDev) {
+    console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
+    console.log(
+      "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
     );
-    trayIcon.setContextMenu(contextMenu);
     installExtension(REACT_DEVELOPER_TOOLS)
       .then((name) => console.log(`확장 추가됨:  ${name}`))
       .catch((err) => console.log("에러 발생: ", err));
-  });
-}
+  }
+});

@@ -3,11 +3,9 @@ import { ModalType } from "types/contexts/ModalType";
 
 export default function useModal(): ModalType {
   const [modal, setModal] = React.useState(false);
-  const [modalContent, setModalContent] = React.useState(
-    "I'm the Modal Content"
-  );
+  const [modalContent, setModalContent] = React.useState<React.ReactNode>();
 
-  const handleModal = (content = "기본 모달 내용") => {
+  const handleModal = (content: React.ReactNode) => {
     const newState = !modal;
     setModal(newState);
     if (content) {

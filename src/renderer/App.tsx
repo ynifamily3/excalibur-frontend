@@ -7,13 +7,9 @@ import PinButton from "components/atoms/PinButton";
 import EscButton from "components/atoms/EscButton";
 import Titlebar from "components/restricted/Titlebar";
 import Hover from "components/restricted/Hover";
-import { MemoryRouter, Route } from "react-router-dom";
-import WaitingComponent from "hocs/WaitingComponent";
 import { ModalProvider } from "contexts/modalContext";
+import { MemoryRouter, Route } from "react-router-dom";
 import { routes } from "routes";
-
-const Intro = React.lazy(() => import("pages/Intro"));
-const About = React.lazy(() => import("pages/About"));
 
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);

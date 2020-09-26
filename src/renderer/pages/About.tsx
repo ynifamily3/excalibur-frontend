@@ -19,7 +19,6 @@ export default function About(): JSX.Element {
   const history = useHistory();
   return (
     <Wrapper>
-      <H1>소개 페이지입니다.</H1>
       <Button
         onClick={() => {
           history.replace("/");

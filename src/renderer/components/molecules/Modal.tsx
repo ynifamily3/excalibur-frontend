@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { ModalContext } from "contexts/modalContext";
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+const Backdrop = styled.div`
   background-color: rgba(0, 0, 0, 0.8);
   position: fixed;
   top: 0;
@@ -18,23 +18,35 @@ const Wrapper = styled.div`
 const Container = styled.div`
   background-color: white;
   position: relative;
-  padding: 5em;
+  padding: 1em;
   box-shadow: 1em;
   border-radius: 1em;
   display: flex;
   flex-direction: column;
+  width: 80%;
+  max-width: 800px;
+  height: 80%;
+  max-height: 600px;
+`;
+
+const RightTop = styled.div`
+  position: absolute;
+  right: 1em;
+  top: 1em;
 `;
 
 const Modal = (): JSX.Element => {
   const { modalContent, handleModal, modal } = React.useContext(ModalContext);
   if (modal) {
     return ReactDOM.createPortal(
-      <Wrapper>
+      <Backdrop>
         <Container>
-          <button onClick={() => handleModal()}>&times;</button>
-          <p>{modalContent}</p>
+          <RightTop>
+            <button onClick={() => handleModal()}>&times;</button>
+          </RightTop>
+          {modalContent}
         </Container>
-      </Wrapper>,
+      </Backdrop>,
       document.querySelector("#modal-root")
     );
   } else return null;
