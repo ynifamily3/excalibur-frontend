@@ -41,9 +41,9 @@ const Modal = (): JSX.Element => {
     return ReactDOM.createPortal(
       <Backdrop>
         <Container>
-          <RightTop>
+          {/* <RightTop>
             <button onClick={() => handleModal()}>&times;</button>
-          </RightTop>
+          </RightTop> */}
           {modalContent}
         </Container>
       </Backdrop>,
