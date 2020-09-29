@@ -20,6 +20,7 @@ export default function About(): JSX.Element {
   return (
     <Wrapper>
       <Button
+        className="animate__animated animate__bounce"
         onClick={() => {
           history.replace("/");
         }}

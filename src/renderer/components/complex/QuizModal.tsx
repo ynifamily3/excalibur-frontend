@@ -2,6 +2,7 @@ import { ModalContext } from "contexts/modalContext";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { QuizModalProps } from "types/components/complex/QuizModal";
+import clsx from "clsx";
 
 const QuizWrapper = styled.div`
   width: 100%;
@@ -10,7 +11,6 @@ const QuizWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding-top: 3em;
-
   ${({ start = 1 }: { start: number }) => {
     return start === 1
       ? `
@@ -130,7 +130,12 @@ export default function QuizModal(
       <Selections>
         {selections.map((selectionText, i) => {
           return (
-            <Selection key={"QuizSelection-" + i}>
+            <Selection
+              key={"QuizSelection-" + i}
+              onClick={() => {
+                setCurrentTime(0);
+              }}
+            >
               {selectionText}
               {isAnswer[i] ? " (정답)" : ""}
             </Selection>

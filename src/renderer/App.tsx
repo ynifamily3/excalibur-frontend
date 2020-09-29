@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ipcRenderer } from "electron";
 import "normalize.css";
 import "styles/global.css";
+import "animate.css";
 import PinButton from "components/atoms/PinButton";
 import EscButton from "components/atoms/EscButton";
 import Titlebar from "components/restricted/Titlebar";
