@@ -1,31 +1,26 @@
-import React, { useEffect } from "react";
+import React from "react";
+import theme from "styles/theme";
 import styled from "styled-components";
 import { RootState } from "rootReducer";
-import { useSelector, useDispatch } from "react-redux";
-import { signInAction } from "features/accounts/accountSlice";
+import { useSelector } from "react-redux";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width: 100%;
+  height: 74px;
+  display: flex;
+  align-items: center;
+`;
+
+const TitleMessage = styled.h1`
+  font-size: ${theme.size.h2}px;
+`;
 
 export default function Gnb(): JSX.Element {
-  const dispatch = useDispatch();
-  const { isLogin, accountInfo } = useSelector(
-    (state: RootState) => state.account
-  );
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(
-        signInAction({
-          email: "jongkeun.ch@gmail.com",
-          mode: "student",
-          password: "12345",
-        })
-      );
-    }, 1000);
-  }, [dispatch]);
+  const { accountInfo } = useSelector((state: RootState) => state.account);
 
   return (
     <Wrapper>
-      &gt; 설정{isLogin === false ? "비로그인" : `로그인${accountInfo.email}`}
+      <TitleMessage>{accountInfo.name}님, 환영합니다! </TitleMessage>
     </Wrapper>
   );
 }

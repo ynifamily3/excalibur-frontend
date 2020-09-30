@@ -11,6 +11,9 @@ import Hover from "components/restricted/Hover";
 import { ModalProvider } from "contexts/modalContext";
 import { MemoryRouter, Redirect, Route } from "react-router-dom";
 import { routes } from "routes";
+import WaitingComponent from "hocs/WaitingComponent";
+
+const Intro = React.lazy(() => import("pages/Intro"));
 
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
