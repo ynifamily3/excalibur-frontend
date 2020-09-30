@@ -2,7 +2,6 @@ import { ModalContext } from "contexts/modalContext";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { QuizModalProps } from "types/components/complex/QuizModal";
-import clsx from "clsx";
 
 const QuizWrapper = styled.div`
   width: 100%;

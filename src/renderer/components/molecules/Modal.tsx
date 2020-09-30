@@ -29,23 +29,12 @@ const Container = styled.div`
   max-height: 600px;
 `;
 
-const RightTop = styled.div`
-  position: absolute;
-  right: 1em;
-  top: 1em;
-`;
-
 const Modal = (): JSX.Element => {
-  const { modalContent, handleModal, modal } = React.useContext(ModalContext);
+  const { modalContent, modal } = React.useContext(ModalContext);
   if (modal) {
     return ReactDOM.createPortal(
       <Backdrop>
-        <Container>
-          {/* <RightTop>
-            <button onClick={() => handleModal()}>&times;</button>
-          </RightTop> */}
-          {modalContent}
-        </Container>
+        <Container>{modalContent}</Container>
       </Backdrop>,
       document.querySelector("#modal-root")
     );

@@ -9,12 +9,6 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const H1 = styled.h1`
-  text-align: center;
-  margin: 0;
-  padding: 0;
-`;
-
 export default function About(): JSX.Element {
   const history = useHistory();
   return (
