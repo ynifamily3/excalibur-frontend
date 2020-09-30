@@ -9,7 +9,7 @@ import EscButton from "components/atoms/EscButton";
 import Titlebar from "components/restricted/Titlebar";
 import Hover from "components/restricted/Hover";
 import { ModalProvider } from "contexts/modalContext";
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Redirect, Route } from "react-router-dom";
 import { routes } from "routes";
 
 function App() {
@@ -40,6 +40,11 @@ function App() {
       </Hover>
       <ModalProvider>
         <MemoryRouter>
+          {/* <Route exact key="/" path="/" component={WaitingComponent(Intro)} /> */}
+          {/* NOTE 디버그 목적 라우트 점핑입니다. */}
+          <Route exact key="/" path="/">
+            <Redirect to="/dashboard" />
+          </Route>
           {routes.map((route) => (
             <Route
               exact
