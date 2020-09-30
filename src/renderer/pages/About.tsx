@@ -9,18 +9,12 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const H1 = styled.h1`
-  text-align: center;
-  margin: 0;
-  padding: 0;
-`;
-
 export default function About(): JSX.Element {
   const history = useHistory();
   return (
     <Wrapper>
-      <H1>소개 페이지입니다.</H1>
       <Button
+        className="animate__animated animate__bounce"
         onClick={() => {
           history.replace("/");
         }}
