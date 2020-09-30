@@ -32,17 +32,15 @@ const accountSlice = createSlice({
   reducers: {
     signUpAction(state, action: PayloadAction<SignUp>) {
       const { name, email, password } = action.payload;
-      console.log(name, email, password, "회원가입 액션 발행..");
     },
     signInAction(state, action: PayloadAction<SignIn>) {
       const { mode, email, password } = action.payload;
-      console.log(mode, email, password, "로그인 액션 발행..");
       state.isLogin = true;
       // NOTE 이중화는 안 된다.. 이런! => state.accountInfo.email = "어쩌구" 는 작동하지 않는다.
       state.accountInfo = {
         email,
         mode,
-        name: "DB에서 가져옴 ",
+        name: "미엘",
       };
     },
   },

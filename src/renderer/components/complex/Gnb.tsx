@@ -9,10 +9,14 @@ const Wrapper = styled.div`
   height: 74px;
   display: flex;
   align-items: center;
+  padding-left: 25px;
+  border-bottom: 2px solid black;
 `;
 
 const TitleMessage = styled.h1`
   font-size: ${theme.size.h2}px;
+  line-height: 41px;
+  margin: 0;
 `;
 
 export default function Gnb(): JSX.Element {

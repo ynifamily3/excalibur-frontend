@@ -3,8 +3,21 @@ import React, { useEffect, useState } from "react";
 import { ipcRenderer } from "electron";
 import { RootState } from "rootReducer";
 import { useSelector, useDispatch } from "react-redux";
-import { signInAction } from "features/accounts/accountSlice";
+import { signInAction } from "slices/accountSlice";
 import Loading from "components/atoms/Loading";
+import styled from "styled-components";
+import Aside from "components/complex/Aside";
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const BottomWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 74px);
+`;
 
 export default function Dashboard(): JSX.Element {
   // 필요한 비동기 데이터가 로드 되었을 때 컴포넌트를 렌더링 하기로 함.
@@ -38,7 +51,12 @@ export default function Dashboard(): JSX.Element {
   return (
     <>
       {loaded === 100 ? (
-        <Gnb />
+        <Wrapper>
+          <Gnb />
+          <BottomWrapper>
+            <Aside />
+          </BottomWrapper>
+        </Wrapper>
       ) : (
         <Loading>동적 컨텐츠 로딩 중... {loaded}%</Loading>
       )}
