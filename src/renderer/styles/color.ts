@@ -2,4 +2,6 @@
 export default {
   white: ["#FFFFFF"],
   gray: ["#EEF0F3", "#DDDFE3", "#E7E9EB"],
+  aside: "#EEF0F3",
+  green: ["#6FCF97", "#27AE60", "#219653"],
 };

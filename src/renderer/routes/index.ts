@@ -1,16 +1,16 @@
 import React from "react";
 import WaitingComponent from "hocs/WaitingComponent";
 
-const Intro = React.lazy(() => import("pages/Intro"));
 const About = React.lazy(() => import("pages/About"));
+const Dashboard = React.lazy(() => import("pages/Dashboard"));
 
 export const routes = [
   {
-    path: "/",
-    component: WaitingComponent(Intro),
-  },
-  {
     path: "/about",
     component: WaitingComponent(About),
+  },
+  {
+    path: "/dashboard",
+    component: WaitingComponent(Dashboard),
   },
 ];
