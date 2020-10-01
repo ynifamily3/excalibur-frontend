@@ -14,6 +14,7 @@ const Wrapper = styled.div`
 `;
 
 const TitleMessage = styled.h1`
+  font-weight: normal;
   font-size: ${theme.size.h2}px;
   line-height: 41px;
   margin: 0;
@@ -24,7 +25,10 @@ export default function Gnb(): JSX.Element {
 
   return (
     <Wrapper>
-      <TitleMessage>{accountInfo.name}님, 환영합니다! </TitleMessage>
+      <TitleMessage>
+        {accountInfo.name}{" "}
+        {accountInfo.mode === "teacher" ? "강의자" : "수강생"}님, 환영합니다!{" "}
+      </TitleMessage>
     </Wrapper>
   );
 }

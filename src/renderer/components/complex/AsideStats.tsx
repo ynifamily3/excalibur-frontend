@@ -4,6 +4,9 @@ import theme from "styles/theme";
 import SettingIcon from "components/atoms/svg/Setting";
 import ProfileIcon from "components/atoms/svg/User";
 import CircleIcon from "components/atoms/svg/Circle";
+import { RootState } from "rootReducer";
+import { useSelector } from "react-redux";
+
 const Wrapper = styled.div`
   background-color: #e7e8eb;
   width: 100%;
@@ -35,6 +38,8 @@ const UserStat = styled.div`
 const Setting = styled.div``;
 
 export default function AsideStats(): JSX.Element {
+  const { accountInfo } = useSelector((state: RootState) => state.account);
+
   return (
     <Wrapper>
       <Profile>
@@ -46,7 +51,7 @@ export default function AsideStats(): JSX.Element {
       <UserStat>
         <div>수업듣는 미엘</div>
         <div style={{ color: "#777777", fontSize: `${theme.size.h5}px` }}>
-          수강생으로 로그인됨
+          {accountInfo.mode === "student" ? "수강생으" : "강의자"}로 로그인됨
         </div>
       </UserStat>
       <Setting>
