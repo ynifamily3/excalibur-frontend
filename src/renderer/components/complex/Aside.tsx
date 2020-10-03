@@ -3,7 +3,8 @@ import color from "styles/color";
 import styled from "styled-components";
 import { RootState } from "rootReducer";
 import { useSelector } from "react-redux";
-import AnalysisButton from "components/atoms/AnlysisButton";
+// import AnalysisButton from "components/atoms/AnlysisButton";
+import ExitAnalysisButton from "components/complex/ExitAnlysisButton";
 import MenuSVG from "components/atoms/svg/Menu";
 import AsideStats from "components/complex/AsideStats";
 const Wrapper = styled.div`
@@ -70,7 +71,8 @@ export default function Aside(): JSX.Element {
         <Menu>메뉴3</Menu>
         <Menu>메뉴4</Menu>
       </Menus>
-      <AnalysisButton />
+      {/* <AnalysisButton /> */}
+      <ExitAnalysisButton />
       <AsideStats />
     </Wrapper>
   );

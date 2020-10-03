@@ -7,7 +7,7 @@ import { signInAction } from "slices/accountSlice";
 import Loading from "components/atoms/Loading";
 import styled from "styled-components";
 import Aside from "components/complex/Aside";
-import ManageLectureContent from "components/complex/ManageLectureContent";
+import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineContent";
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,8 +56,10 @@ export default function Dashboard(): JSX.Element {
           <Gnb />
           <BottomWrapper>
             <Aside />
-            {/* 디버그: 여기에 라우트에 따라 동적으로 로드됩니다. */}
-            <ManageLectureContent />
+            {/* NOTE debug: 여기에 라우트에 따라 동적으로 로드됩니다. */}
+            {/* <ManageLectureContent /> */}
+            {/* <ListLectureAnalysisContent /> */}
+            <ManageQuizTimeLineContent />
           </BottomWrapper>
         </Wrapper>
       ) : (

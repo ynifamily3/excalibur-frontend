@@ -27,6 +27,7 @@ if (require("electron-squirrel-startup")) {
 ipcMain.on("resizeWindow", (event, argument) => {
   const { width, height, animated } = argument;
   mainWindow.setSize(width, height, animated);
+  mainWindow.setMinimumSize(width, height);
 });
 
 ipcMain.on("notification", (event, argument) => {

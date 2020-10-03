@@ -7,6 +7,7 @@ import styled from "styled-components";
 import theme from "styles/theme";
 import Button from "components/atoms/Button";
 import SettingIcon from "components/atoms/svg/Setting";
+import color from "styles/color";
 
 const Wrapper = styled.div`
   padding: 44px;
@@ -52,26 +53,54 @@ const LIChild = styled.div`
     padding: "0 20px";
   }
 `;
+
+const InputText = styled.input`
+  width: 100%;
+  min-width: 300px;
+  min-height: 44px;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.05);
+  font-size: ${theme.size.h4}px;
+  padding-left: 10px;
+  appearance: none;
+`;
+
 const data = [
-  { title: "일어 I", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "운영체제", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "독도의 이해", kind: "싫은과목", createdAt: "2020.08.12." },
-  { title: "시스템 프로그래밍", kind: "좋은과목", createdAt: "2020.08.12." },
-  { title: "대구경북의 이해", kind: "꿀교양", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  {
+    times: 4,
+    title: "생활속의 물리",
+    kind: "미분류",
+    createdAt: "2020.08.12.",
+  },
+  { times: 2, title: "교양승마", kind: "미분류", createdAt: "2020.08.15." },
+  {
+    times: 3,
+    title: "생활속의 물리",
+    kind: "미분류",
+    createdAt: "2020.08.10.",
+  },
+  {
+    times: 2,
+    title: "도박중독과 상담",
+    kind: "미분류",
+    createdAt: "2020.08.07.",
+  },
+  { times: 7, title: "수학", kind: "미분류", createdAt: "2020.08.01." },
+  { times: 6, title: "수학", kind: "미분류", createdAt: "2020.07.24." },
+  { times: 1, title: "교양승마", kind: "미분류", createdAt: "2020.07.22." },
 ];
 
-export default function ManageLectureContent(): JSX.Element {
+export default function ListLectureAnalysisContent(): JSX.Element {
   return (
     <Wrapper>
       <Top>
         <Select>
-          <option>전체 보기</option>
+          <option>미분류</option>
           <option>2</option>
           <option>3</option>
           <option>4</option>
         </Select>
-        <div style={{ flex: 1, marginLeft: "16px" }}>
+        <div style={{ marginLeft: "16px" }}>
           <Select>
             <option>최신순</option>
             <option>2</option>
@@ -79,17 +108,9 @@ export default function ManageLectureContent(): JSX.Element {
             <option>4</option>
           </Select>
         </div>
-        <Button
-          color="white"
-          style={{
-            backgroundColor: "#032D3C",
-            borderRadius: 0,
-            width: "153px",
-            height: "55px",
-          }}
-        >
-          + 새 강의 추가
-        </Button>
+        <div style={{ flex: 1, marginLeft: "16px" }}>
+          <InputText type="text" placeholder="강의명을 입력하세요..." />
+        </div>
       </Top>
       <div
         style={{
@@ -109,7 +130,20 @@ export default function ManageLectureContent(): JSX.Element {
               <LIChild>{x.kind}</LIChild>
               <LIChild>{x.createdAt}</LIChild>
               <LIChild>
-                <SettingIcon />
+                <Button
+                  color="white"
+                  style={{
+                    backgroundColor: "#032D3C",
+                    borderRadius: 0,
+                    fontSize: "12px",
+                    width: "76px",
+                    height: "34px",
+                    paddingTop: "4px",
+                    paddingBottom: "2px",
+                  }}
+                >
+                  리포트
+                </Button>
               </LIChild>
             </LI>
           );
