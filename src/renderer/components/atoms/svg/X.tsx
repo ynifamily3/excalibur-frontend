@@ -1,10 +1,6 @@
 import React from "react";
 
-export default function X({
-  color = "#E4E4E4",
-}: {
-  color?: string;
-}): JSX.Element {
+export default function X({ color = "#E4E4E4" }: { color?: string }): JSX.Element {
   return (
     <svg
       width="14"
