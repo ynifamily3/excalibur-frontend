@@ -58,7 +58,7 @@ ipcMain.on("analysisMode", () => {
   mainWindow.setResizable(false);
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 618, height - 102 - 100, true);
-  mainWindow.setOpacity(0.7);
+  // mainWindow.setOpacity(0.7);
 });
 
 ipcMain.on("analysisFold", () => {
