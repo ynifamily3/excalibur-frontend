@@ -62,19 +62,19 @@ ipcMain.on("analysisMode", () => {
 });
 
 ipcMain.on("analysisFold", () => {
+  mainWindow.setResizable(true);
   mainWindow.setMinimumSize(100, 102);
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 100, height - 102 - 100, true);
-  mainWindow.setResizable(true);
   mainWindow.setSize(100, 102, true);
   mainWindow.setResizable(false);
 });
 
 ipcMain.on("analysisOpen", () => {
+  mainWindow.setResizable(true);
   mainWindow.setMinimumSize(618, 102);
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 618, height - 102 - 100, true);
-  mainWindow.setResizable(true);
   mainWindow.setSize(618, 102, true);
   mainWindow.setResizable(false);
 });
