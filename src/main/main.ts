@@ -62,10 +62,10 @@ ipcMain.on("analysisMode", () => {
 });
 
 ipcMain.on("analysisFold", () => {
-  mainWindow.setMinimumSize(50, 102);
+  mainWindow.setMinimumSize(100, 102);
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
-  mainWindow.setPosition(width - 50, height - 102 - 100, true);
-  mainWindow.setSize(50, 102, true);
+  mainWindow.setPosition(width - 100, height - 102 - 100, true);
+  mainWindow.setSize(100, 102, true);
 });
 
 ipcMain.on("analysisOpen", () => {
