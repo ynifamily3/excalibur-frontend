@@ -27,7 +27,6 @@ if (require("electron-squirrel-startup")) {
 ipcMain.on("resizeWindow", (event, argument) => {
   const { width, height, animated } = argument;
   mainWindow.setSize(width, height, animated);
-  // mainWindow.setBounds({ width, height }); // windows 버그로 인한 수정
   mainWindow.setMinimumSize(width, height);
 });
 
@@ -59,7 +58,7 @@ ipcMain.on("analysisMode", () => {
   mainWindow.setResizable(false);
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 618, height - 102 - 100, true);
-  // mainWindow.setOpacity(0.7);
+  mainWindow.setOpacity(0.7);
 });
 
 ipcMain.on("analysisFold", () => {
@@ -67,8 +66,7 @@ ipcMain.on("analysisFold", () => {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 100, height - 102 - 100, true);
   mainWindow.setResizable(true);
-  // mainWindow.setSize(100, 102, true);
-  mainWindow.setBounds({ width: 100, height: 102 }); // windows 버그로 인한 수정
+  mainWindow.setSize(100, 102, true);
   mainWindow.setResizable(false);
 });
 
@@ -77,16 +75,14 @@ ipcMain.on("analysisOpen", () => {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(width - 618, height - 102 - 100, true);
   mainWindow.setResizable(true);
-  // mainWindow.setSize(618, 102, true);
-  mainWindow.setBounds({ width: 618, height: 102 }); // windows 버그로 인한 수정
+  mainWindow.setSize(618, 102, true);
   mainWindow.setResizable(false);
 });
 
 ipcMain.on("normalMode", (event, argument) => {
   mainWindow.setAlwaysOnTop(argument);
   mainWindow.setResizable(true);
-  // mainWindow.setSize(1280, 720, true);
-  mainWindow.setBounds({ width: 1280, height: 720 }); // windows 버그로 인한 수정
+  mainWindow.setSize(1280, 720, true);
   mainWindow.setMinimumSize(1280, 720);
 });
 
