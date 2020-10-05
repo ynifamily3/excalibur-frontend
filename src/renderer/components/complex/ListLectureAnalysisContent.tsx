@@ -8,6 +8,7 @@ import theme from "styles/theme";
 import Button from "components/atoms/Button";
 import SettingIcon from "components/atoms/svg/Setting";
 import color from "styles/color";
+import InputText from "components/molecules/InputText";
 
 const Wrapper = styled.div`
   padding: 44px;
@@ -52,17 +53,6 @@ const LIChild = styled.div`
     font-size: ${theme.size.h3}px;
     padding: "0 20px";
   }
-`;
-
-const InputText = styled.input`
-  width: 100%;
-  min-width: 300px;
-  min-height: 44px;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  background-color: rgba(0, 0, 0, 0.05);
-  font-size: ${theme.size.h4}px;
-  padding-left: 10px;
-  appearance: none;
 `;
 
 const data = [

@@ -14,6 +14,9 @@ const SSelect = styled.select`
   color: rgba(0, 0, 0, 0.4);
   padding-left: 10px;
   appearance: none;
+  width: ${({ width = "227px" }: { width: string }) => {
+    return width;
+  }};
 `;
 
 const Triangle = styled.div`
@@ -41,7 +44,9 @@ const Select = (props: PropsWithChildren<{ width?: string }>): JSX.Element => {
       <Triangle>
         <TriangleElement />
       </Triangle>
-      <SSelect {...props2}>{props.children}</SSelect>
+      <SSelect {...props2} width={width ? width : "227px"}>
+        {props.children}
+      </SSelect>
     </div>
   );
 };
