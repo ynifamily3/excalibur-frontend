@@ -1,4 +1,4 @@
-import {
+import electron, {
   app,
   BrowserWindow,
   ipcMain,
@@ -48,6 +48,38 @@ ipcMain.on("alwaysOnTopDeActivate", () => {
 
 ipcMain.on("hideMainWindow", () => {
   mainWindow.hide();
+});
+
+ipcMain.on("analysisMode", () => {
+  mainWindow.setAlwaysOnTop(true);
+  console.log("셋 사이즈..");
+  mainWindow.setMinimumSize(618, 102);
+  mainWindow.setSize(618, 102, true);
+  mainWindow.setResizable(false);
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+  mainWindow.setPosition(width - 618, height - 102 - 100, true);
+  mainWindow.setOpacity(0.7);
+});
+
+ipcMain.on("analysisFold", () => {
+  mainWindow.setMinimumSize(50, 102);
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+  mainWindow.setPosition(width - 50, height - 102 - 100, true);
+  mainWindow.setSize(50, 102, true);
+});
+
+ipcMain.on("analysisOpen", () => {
+  mainWindow.setMinimumSize(618, 102);
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+  mainWindow.setPosition(width - 618, height - 102 - 100, true);
+  mainWindow.setSize(618, 102, true);
+});
+
+ipcMain.on("normalMode", (event, argument) => {
+  mainWindow.setAlwaysOnTop(argument);
+  mainWindow.setSize(1280, 720, true);
+  mainWindow.setMinimumSize(1280, 720);
+  mainWindow.setResizable(true);
 });
 
 const contextMenu = Menu.buildFromTemplate([

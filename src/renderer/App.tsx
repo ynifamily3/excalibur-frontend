@@ -12,41 +12,58 @@ import { ModalProvider } from "contexts/modalContext";
 import { MemoryRouter, Redirect, Route } from "react-router-dom";
 import { routes } from "routes";
 import WaitingComponent from "hocs/WaitingComponent";
-
+import queryString from "query-string";
+import AnalysisScreen from "pages/AnalysisScreen";
+import styled from "styled-components";
+import { RootState } from "rootReducer";
+import { useSelector } from "react-redux";
 const Intro = React.lazy(() => import("pages/Intro"));
+
+const NoTransparentPanel = styled.div`
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  z-index: -100;
+  position: absolute;
+`;
 
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
+  const { isTransparent } = useSelector((state: RootState) => state.ui);
   return (
     <>
-      <div id="dragabletop" />
-      <Titlebar />
-      <Hover
-        right="3.65em"
-        style={{ zIndex: 300 }}
-        onClick={() => {
-          alwaysOnTop
-            ? ipcRenderer.send("alwaysOnTopDeActivate")
-            : ipcRenderer.send("alwaysOnTopActivate");
-          setAlwaysOnTop(!alwaysOnTop);
-        }}
-      >
-        <PinButton isPinned={alwaysOnTop} />
-      </Hover>
-      <Hover
-        style={{ zIndex: 300 }}
-        onClick={() => {
-          ipcRenderer.send("hideMainWindow");
-        }}
-      >
-        <EscButton />
-      </Hover>
+      {!isTransparent && (
+        <>
+          <div id="dragabletop" />
+          <Titlebar />
+          <Hover
+            right="3.65em"
+            style={{ zIndex: 300 }}
+            onClick={() => {
+              alwaysOnTop
+                ? ipcRenderer.send("alwaysOnTopDeActivate")
+                : ipcRenderer.send("alwaysOnTopActivate");
+              setAlwaysOnTop(!alwaysOnTop);
+            }}
+          >
+            <PinButton isPinned={alwaysOnTop} />
+          </Hover>
+          <Hover
+            style={{ zIndex: 300 }}
+            onClick={() => {
+              ipcRenderer.send("hideMainWindow");
+            }}
+          >
+            <EscButton />
+          </Hover>
+        </>
+      )}
       <ModalProvider>
         <MemoryRouter>
           {/* <Route exact key="/" path="/" component={WaitingComponent(Intro)} /> */}
           {/* NOTE 디버그 목적 라우트 점핑입니다. */}
           <Route exact key="/" path="/">
-            <Redirect to="/dashboard" />
+            <Redirect to="/analysis" />
           </Route>
           {routes.map((route) => (
             <Route
