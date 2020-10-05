@@ -5,8 +5,17 @@ import { useDispatch } from "react-redux";
 import { setTransparentAction } from "slices/uiSlice";
 import { ipcRenderer } from "electron";
 
-const Wrapper = styled.div`
+const Dragable = styled.div`
+  cursor: move;
   -webkit-app-region: drag;
+  width: 50px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
   margin: 0;
@@ -22,6 +31,9 @@ export default function AnalysisScreen(): JSX.Element {
   }, [dispatch]);
   return (
     <Wrapper>
+      <Dragable>
+        .<br />.<br />.
+      </Dragable>
       <Button
         color="black"
         onClick={() => {
