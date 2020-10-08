@@ -3,6 +3,7 @@ import color from "styles/color";
 import styled from "styled-components";
 import theme from "styles/theme";
 import RightArrow from "./svg/RightArrow";
+
 const Button = styled.button`
   background-color: ${color.green[1]};
   font-size: ${theme.size.h4}px;

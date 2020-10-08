@@ -77,7 +77,7 @@ const data = [
   {
     time: "1:10:23",
     content:
-      "{{answer}}은 상쇄간섭으로 외부 소음을 차단하며 소음이 심한 장소에서도...",
+      "{{answer}}은 상쇄간섭으로 외부 소음을 차단하며 소음이 심한 장소에서도 잘 들을 수 있게 하는 것이다.",
     answer: "노이즈캔슬링",
     isQuestioned: false,
     responseRate: 0,
@@ -86,7 +86,7 @@ const data = [
   {
     time: "55:30",
     content:
-      "처음 가본 곳인데 예전에 와본 것 같거나 처음 하는 일을 이전에 한 것 같은 이상한...",
+      "처음 가본 곳인데 예전에 와본 것 같거나 처음 하는 일을 이전에 한 것 같은 이상한 현상이다.",
     answer: "데자뷰",
     isQuestioned: true,
     responseRate: 94,
@@ -94,7 +94,7 @@ const data = [
   },
   {
     time: "45:03",
-    content: '{{answer}}는 "티켓"을 기반으로 동작하는 컴퓨터 보안...',
+    content: '{{answer}}는 "티켓"을 기반으로 동작하는 컴퓨터 보안이다.',
     answer: "커베로스",
     isQuestioned: false,
     responseRate: 0,

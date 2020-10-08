@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { RootState } from "rootReducer";
 import { useSelector } from "react-redux";
 import AnalysisButton from "components/atoms/AnlysisButton";
-// import ExitAnalysisButton from "components/complex/ExitAnlysisButton";
 import MenuSVG from "components/atoms/svg/Menu";
 import AsideStats from "components/complex/AsideStats";
 const Wrapper = styled.div`
@@ -64,7 +63,6 @@ export default function Aside(): JSX.Element {
 
   return (
     <Wrapper>
-      {/* <div>{accountInfo.name}님, Aside입니다. </div> */}
       <Menus>
         <Menu selected={true}>메뉴1</Menu>
         <Menu>메뉴2</Menu>
@@ -72,7 +70,6 @@ export default function Aside(): JSX.Element {
         <Menu>메뉴4</Menu>
       </Menus>
       <AnalysisButton />
-      {/* <ExitAnalysisButton /> */}
       <AsideStats />
     </Wrapper>
   );

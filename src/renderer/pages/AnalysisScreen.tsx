@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "components/atoms/Button";
 import { useDispatch } from "react-redux";
-import { setTransparentAction } from "slices/uiSlice";
+import { setTransparentAction, setNoTransparentAction } from "slices/uiSlice";
 import { ipcRenderer } from "electron";
+import { useHistory } from "react-router-dom";
 
 const Dragable = styled.div`
   cursor: move;
@@ -23,9 +24,14 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
+const Content = styled.div`
+  overflow: hidden;
+`;
+
 export default function AnalysisScreen(): JSX.Element {
   const dispatch = useDispatch();
   const [isFold, setFold] = useState(false);
+  const history = useHistory();
   useEffect(() => {
     dispatch(setTransparentAction());
   }, [dispatch]);
@@ -54,8 +60,23 @@ export default function AnalysisScreen(): JSX.Element {
           border: "none",
         }}
       >
-        {!isFold ? ">" : "<"}
+        {!isFold ? ">|" : "|<"}
       </Button>
+
+      <Content style={isFold ? { display: "none" } : { flex: 1 }}>
+        <Button
+          color="black"
+          onClick={() => {
+            dispatch(setNoTransparentAction({ alwaysOnTop: false }));
+            history.replace("/dashboard");
+          }}
+        >
+          대시보드
+        </Button>
+        <Button color="black">학생</Button>
+        <Button color="black">퀴즈</Button>
+        <Button color="black">설정</Button>
+      </Content>
     </Wrapper>
   );
 }

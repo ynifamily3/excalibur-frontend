@@ -27,7 +27,6 @@ const Triangle = styled.div`
   align-items: center;
   right: 0;
   top: 0;
-  /* height: 100%; */
   height: 44px;
   pointer-events: none; /* 클릭가능하도록 함 */
 `;

@@ -55,8 +55,8 @@ const LIChild = styled.div`
 const data = [
   { title: "일어 I", kind: "미분류", createdAt: "2020.08.12." },
   { title: "운영체제", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "독도의 이해", kind: "싫은과목", createdAt: "2020.08.12." },
-  { title: "시스템 프로그래밍", kind: "좋은과목", createdAt: "2020.08.12." },
+  { title: "독도의 이해", kind: "좋은과목", createdAt: "2020.08.12." },
+  { title: "시스템 프로그래밍", kind: "싫은과목", createdAt: "2020.08.12." },
   { title: "대구경북의 이해", kind: "꿀교양", createdAt: "2020.08.12." },
   { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
 ];
