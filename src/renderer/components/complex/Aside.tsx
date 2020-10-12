@@ -2,10 +2,12 @@ import React from "react";
 import color from "styles/color";
 import styled from "styled-components";
 import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AnalysisButton from "components/atoms/AnlysisButton";
+import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
 import MenuSVG from "components/atoms/svg/Menu";
 import AsideStats from "components/complex/AsideStats";
+import { toNormalMode, toAnalysisMode } from "slices/globalStateSlice";
 const Wrapper = styled.div`
   width: 340px;
   height: 100%;
@@ -60,6 +62,8 @@ Menu.defaultProps = {
 
 export default function Aside(): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
+  const { mode } = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
 
   return (
     <Wrapper>
@@ -69,7 +73,20 @@ export default function Aside(): JSX.Element {
         <Menu>메뉴3</Menu>
         <Menu>메뉴4</Menu>
       </Menus>
-      <AnalysisButton />
+      {accountInfo.mode == "teacher" &&
+        (mode === "normal" ? (
+          <AnalysisButton
+            onClick={() => {
+              dispatch(toAnalysisMode());
+            }}
+          />
+        ) : (
+          <ExitAnalysisButton
+            onClick={() => {
+              dispatch(toNormalMode());
+            }}
+          />
+        ))}
       <AsideStats />
     </Wrapper>
   );

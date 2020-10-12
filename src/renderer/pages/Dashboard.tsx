@@ -40,7 +40,7 @@ export default function Dashboard(): JSX.Element {
       dispatch(
         signInAction({
           email: "jongkeun.ch@gmail.com",
-          mode: "student",
+          mode: "teacher",
           password: "12345",
         })
       );

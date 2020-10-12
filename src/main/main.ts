@@ -71,8 +71,8 @@ function noDuplicateCode({
     mainWindow.getBounds()
   ).workArea;
 
-  mainWindow.setPosition(x + width - w, y + height - h - 100, true);
   mainWindow.setSize(w, h, true);
+  mainWindow.setPosition(x + width - w, y + height - h - 100, true);
   if (typeof opacity === "number") mainWindow.setOpacity(0.7);
   mainWindow.setResizable(false);
 }
@@ -99,12 +99,12 @@ ipcMain.on("normalMode", (event, argument) => {
   const { x, y, width, height } = electron.screen.getDisplayMatching(
     mainWindow.getBounds()
   ).workArea;
-  mainWindow.setSize(1280, 720, true);
   mainWindow.setPosition(
     (x + width) / 2 - 1280 / 2,
     (y + height) / 2 - 720 / 2,
     true
   );
+  mainWindow.setSize(1280, 720, true);
   // mainWindow.center();
 });
 

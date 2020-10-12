@@ -34,6 +34,7 @@ const accountSlice = createSlice({
       const { name, email, password } = action.payload;
     },
     signInAction(state, action: PayloadAction<SignIn>) {
+      console.log("사인 인 액션 리듀서 실행 됨.");
       const { mode, email, password } = action.payload;
       state.isLogin = true;
       // NOTE 이중화는 안 된다.. 이런! => state.accountInfo.email = "어쩌구" 는 작동하지 않는다.

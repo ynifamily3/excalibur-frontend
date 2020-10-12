@@ -21,9 +21,13 @@ const Button = styled.button`
   }
 `;
 
-export default function AnalysisButton(): JSX.Element {
+export default function AnalysisButton({
+  onClick,
+}: {
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}): JSX.Element {
   return (
-    <Button>
+    <Button onClick={onClick}>
       <div
         style={{
           display: "flex",

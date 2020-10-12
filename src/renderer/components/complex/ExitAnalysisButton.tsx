@@ -6,6 +6,8 @@ import X from "../atoms/svg/X";
 import MB from "../atoms/svg/MiniBookmark";
 import MT from "../atoms/svg/MiniTimer";
 import MP from "../atoms/svg/MiniPeople";
+import MinimodeButton from "components/atoms/svg/MinimodeButton";
+import { useHistory } from "react-router-dom";
 
 const Button = styled.button`
   background-color: rgb(254, 72, 80);
@@ -28,6 +30,7 @@ const Button = styled.button`
 
 const StatusBar = styled.div`
   display: flex;
+  position: relative;
   font-size: ${theme.size.h4}px;
   flex-direction: column;
   background-color: rgb(79, 79, 79);
@@ -41,13 +44,33 @@ const StatusBar = styled.div`
   height: 67px;
   justify-content: center;
   font-size: ${theme.size.h5}px;
-  /* align-items: center; */
 `;
 
-export default function AnalysisButton(): JSX.Element {
+const TominiButton = styled.button`
+  cursor: pointer;
+  border: none;
+  background-color: inherit;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+`;
+
+export default function AnalysisButton({
+  onClick,
+}: {
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}): JSX.Element {
+  const history = useHistory();
   return (
     <>
       <StatusBar>
+        <TominiButton
+          onClick={() => {
+            history.replace("/analysis");
+          }}
+        >
+          <MinimodeButton color="#e4e4e4" />
+        </TominiButton>
         <div style={{ fontSize: theme.size.h4 + "px", marginBottom: "10px" }}>
           제주 해녀의 이해
         </div>
@@ -66,7 +89,7 @@ export default function AnalysisButton(): JSX.Element {
           </span>
         </div>
       </StatusBar>
-      <Button>
+      <Button onClick={onClick}>
         <div
           style={{
             display: "flex",

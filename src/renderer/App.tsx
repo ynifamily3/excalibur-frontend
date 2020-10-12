@@ -19,14 +19,6 @@ import { RootState } from "rootReducer";
 import { useSelector } from "react-redux";
 const Intro = React.lazy(() => import("pages/Intro"));
 
-const NoTransparentPanel = styled.div`
-  width: 100%;
-  height: 100vh;
-  background-color: white;
-  z-index: -100;
-  position: absolute;
-`;
-
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
   const { isTransparent } = useSelector((state: RootState) => state.ui);
@@ -63,7 +55,7 @@ function App() {
           {/* <Route exact key="/" path="/" component={WaitingComponent(Intro)} /> */}
           {/* NOTE 디버그 목적 라우트 점핑입니다. */}
           <Route exact key="/" path="/">
-            <Redirect to="/analysis" />
+            <Redirect to="/dashboard" />
           </Route>
           {routes.map((route) => (
             <Route
