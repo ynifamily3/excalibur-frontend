@@ -1,4 +1,4 @@
-import {
+import electron, {
   app,
   BrowserWindow,
   ipcMain,
@@ -17,7 +17,12 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 let trayIcon = null;
 let mainWindow: BrowserWindow;
-let isQuiting = false;
+enum MODE {
+  NORMAL,
+  ANALYSIS,
+}
+let mode = MODE.NORMAL;
+let isQuiting = isDev ? true : false; // false인데 디버깅하기 싫어서 true로 바꿈
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
@@ -27,6 +32,7 @@ if (require("electron-squirrel-startup")) {
 ipcMain.on("resizeWindow", (event, argument) => {
   const { width, height, animated } = argument;
   mainWindow.setSize(width, height, animated);
+  mainWindow.setMinimumSize(width, height);
 });
 
 ipcMain.on("notification", (event, argument) => {
@@ -45,8 +51,65 @@ ipcMain.on("alwaysOnTopDeActivate", () => {
   mainWindow.setAlwaysOnTop(false);
 });
 
+ipcMain.handle("getAlwaysOnStatus", async () => {
+  return mainWindow.isAlwaysOnTop();
+});
+
 ipcMain.on("hideMainWindow", () => {
   mainWindow.hide();
+});
+
+function noDuplicateCode({
+  w,
+  h,
+  opacity,
+}: {
+  w: number;
+  h: number;
+  opacity?: number;
+}) {
+  mainWindow.setResizable(true);
+  mainWindow.setAlwaysOnTop(true);
+  mainWindow.setMinimumSize(w, h);
+  const { x, y, width, height } = electron.screen.getDisplayMatching(
+    mainWindow.getBounds()
+  ).workArea;
+
+  mainWindow.setSize(w, h, true);
+  mainWindow.setPosition(x + width - w, y + height - h - 100, true);
+  if (typeof opacity === "number") mainWindow.setOpacity(0.7);
+  mainWindow.setResizable(false);
+}
+
+ipcMain.on("analysisMode", () => {
+  mode = MODE.ANALYSIS;
+  noDuplicateCode({ w: 618, h: 102, opacity: 0.7 });
+});
+
+ipcMain.on("analysisFold", () => {
+  noDuplicateCode({ w: 100, h: 102 });
+});
+
+ipcMain.on("analysisOpen", () => {
+  noDuplicateCode({ w: 618, h: 102, opacity: 0.7 });
+});
+
+ipcMain.on("normalMode", (event, argument) => {
+  mode = MODE.NORMAL;
+  mainWindow.setAlwaysOnTop(argument);
+  mainWindow.setResizable(true);
+  mainWindow.setOpacity(1);
+  mainWindow.setMinimumSize(1280, 720);
+  const { x, y, width, height } = electron.screen.getDisplayMatching(
+    mainWindow.getBounds()
+  ).workArea;
+  mainWindow.setPosition(
+    (x + width) / 2 - 1280 / 2,
+    (y + height) / 2 - 720 / 2,
+    true
+  );
+  mainWindow.setSize(1280, 720, true);
+  // mainWindow.center();
 });
 
 const contextMenu = Menu.buildFromTemplate([
@@ -102,13 +165,13 @@ app.whenReady().then(() => {
     "excalibur-swordmaster-client-my-guid"
   );
   trayIcon.setContextMenu(contextMenu);
-  if (isDev) {
-    console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
-    console.log(
-      "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
-    );
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name) => console.log(`확장 추가됨:  ${name}`))
-      .catch((err) => console.log("에러 발생: ", err));
-  }
+  // if (isDev) {
+  //   console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
+  //   console.log(
+  //     "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
+  //   );
+  //   installExtension(REACT_DEVELOPER_TOOLS)
+  //     .then((name) => console.log(`확장 추가됨:  ${name}`))
+  //     .catch((err) => console.log("에러 발생: ", err));
+  // }
 });

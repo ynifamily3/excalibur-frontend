@@ -7,6 +7,12 @@ import { signInAction } from "slices/accountSlice";
 import Loading from "components/atoms/Loading";
 import styled from "styled-components";
 import Aside from "components/complex/Aside";
+import AddNewLectureStudentContent from "components/complex/AddNewLectureStudentContent";
+import DashboardMain from "components/complex/DashboardMain";
+import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineContent";
+import ManageLectureContent from "components/complex/ManageLectureContent";
+import ListLectureAnalysisContent from "components/complex/ListLectureAnalysisContent";
+import AddNewLectureContent from "components/complex/AddNewLectureContent";
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,6 +30,7 @@ export default function Dashboard(): JSX.Element {
   const [loaded, setLoaded] = useState(0);
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
+  const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
     ipcRenderer.send("resizeWindow", {
@@ -39,7 +46,7 @@ export default function Dashboard(): JSX.Element {
       dispatch(
         signInAction({
           email: "jongkeun.ch@gmail.com",
-          mode: "student",
+          mode: "teacher",
           password: "12345",
         })
       );
@@ -55,6 +62,24 @@ export default function Dashboard(): JSX.Element {
           <Gnb />
           <BottomWrapper>
             <Aside />
+            {(() => {
+              switch (currentDashboardPage) {
+                case "main":
+                  return <DashboardMain />;
+                case "managequiz":
+                  return <ManageQuizTimeLineContent />;
+                case "managelecture":
+                  return <ManageLectureContent />;
+                case "listlectureanalysis":
+                  return <ListLectureAnalysisContent />;
+                case "addnewlecture":
+                  return <AddNewLectureContent />;
+                case "addnewlecturestudent":
+                  return <AddNewLectureStudentContent />;
+                default:
+                  return <div>-ㅅ-</div>;
+              }
+            })()}
           </BottomWrapper>
         </Wrapper>
       ) : (
