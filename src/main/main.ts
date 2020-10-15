@@ -51,6 +51,10 @@ ipcMain.on("alwaysOnTopDeActivate", () => {
   mainWindow.setAlwaysOnTop(false);
 });
 
+ipcMain.handle("getAlwaysOnStatus", async () => {
+  return mainWindow.isAlwaysOnTop();
+});
+
 ipcMain.on("hideMainWindow", () => {
   mainWindow.hide();
 });

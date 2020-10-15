@@ -8,6 +8,7 @@ import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
 import MenuSVG from "components/atoms/svg/Menu";
 import AsideStats from "components/complex/AsideStats";
 import { toNormalMode, toAnalysisMode } from "slices/globalStateSlice";
+import { changeDashboardPage } from "slices/uiSlice";
 const Wrapper = styled.div`
   width: 340px;
   height: 100%;
@@ -16,15 +17,17 @@ const Wrapper = styled.div`
   background-color: ${color.aside};
 `;
 
-const Menus = styled.ul`
+const Menus = styled.div`
   margin: 0;
   padding: 0;
-  list-style: none;
   margin-top: 21px;
   flex: 1;
 `;
 
-const MenuCP = styled.li`
+const MenuCP = styled.button`
+  border: none;
+  cursor: pointer;
+  padding: 0;
   width: 100%;
   height: 60px;
   display: flex;
@@ -33,9 +36,14 @@ const MenuCP = styled.li`
     props.selected ? "#F2994A" : "black"};
 `;
 
-const Menu = (props: React.PropsWithChildren<{ selected?: boolean }>) => {
+const Menu = (
+  props: React.PropsWithChildren<{
+    selected?: boolean;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  }>
+) => {
   return (
-    <MenuCP selected={props.selected}>
+    <MenuCP selected={props.selected} onClick={props.onClick}>
       <div
         style={{
           width: "19px",
@@ -63,15 +71,44 @@ Menu.defaultProps = {
 export default function Aside(): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
   const { mode } = useSelector((state: RootState) => state.global);
+  const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
   const dispatch = useDispatch();
 
   return (
     <Wrapper>
       <Menus>
-        <Menu selected={true}>메뉴1</Menu>
-        <Menu>메뉴2</Menu>
-        <Menu>메뉴3</Menu>
-        <Menu>메뉴4</Menu>
+        <Menu
+          selected={currentDashboardPage === "main"}
+          onClick={() => {
+            dispatch(changeDashboardPage("main"));
+          }}
+        >
+          공통 - 대시보드
+        </Menu>
+        <Menu
+          selected={currentDashboardPage === "managequiz"}
+          onClick={() => {
+            dispatch(changeDashboardPage("managequiz"));
+          }}
+        >
+          강의자 - 퀴즈 관리
+        </Menu>
+        <Menu
+          selected={currentDashboardPage === "managelecture"}
+          onClick={() => {
+            dispatch(changeDashboardPage("managelecture"));
+          }}
+        >
+          공통 - 내 강의 관리
+        </Menu>
+        <Menu
+          selected={currentDashboardPage === "listlectureanalysis"}
+          onClick={() => {
+            dispatch(changeDashboardPage("listlectureanalysis"));
+          }}
+        >
+          공통 - 강의분석 기록 목록
+        </Menu>
       </Menus>
       {accountInfo.mode == "teacher" &&
         (mode === "normal" ? (

@@ -8,6 +8,11 @@ import Loading from "components/atoms/Loading";
 import styled from "styled-components";
 import Aside from "components/complex/Aside";
 import AddNewLectureStudentContent from "components/complex/AddNewLectureStudentContent";
+import DashboardMain from "components/complex/DashboardMain";
+import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineContent";
+import ManageLectureContent from "components/complex/ManageLectureContent";
+import ListLectureAnalysisContent from "components/complex/ListLectureAnalysisContent";
+import AddNewLectureContent from "components/complex/AddNewLectureContent";
 
 const Wrapper = styled.div`
   display: flex;
@@ -25,6 +30,7 @@ export default function Dashboard(): JSX.Element {
   const [loaded, setLoaded] = useState(0);
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
+  const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
     ipcRenderer.send("resizeWindow", {
@@ -56,12 +62,24 @@ export default function Dashboard(): JSX.Element {
           <Gnb />
           <BottomWrapper>
             <Aside />
-            {/* NOTE debug: 여기에 라우트에 따라 동적으로 로드됩니다. */}
-            {/* <ManageLectureContent /> */}
-            {/* <ListLectureAnalysisContent /> */}
-            {/* <ManageQuizTimeLineContent /> */}
-            {/* <AddNewLectureContent /> */}
-            <AddNewLectureStudentContent />
+            {(() => {
+              switch (currentDashboardPage) {
+                case "main":
+                  return <DashboardMain />;
+                case "managequiz":
+                  return <ManageQuizTimeLineContent />;
+                case "managelecture":
+                  return <ManageLectureContent />;
+                case "listlectureanalysis":
+                  return <ListLectureAnalysisContent />;
+                case "addnewlecture":
+                  return <AddNewLectureContent />;
+                case "addnewlecturestudent":
+                  return <AddNewLectureStudentContent />;
+                default:
+                  return <div>-ㅅ-</div>;
+              }
+            })()}
           </BottomWrapper>
         </Wrapper>
       ) : (

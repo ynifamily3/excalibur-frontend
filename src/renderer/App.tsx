@@ -1,5 +1,5 @@
 import { hot } from "react-hot-loader";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ipcRenderer } from "electron";
 import "normalize.css";
 import "styles/global.css";
@@ -22,6 +22,12 @@ const Intro = React.lazy(() => import("pages/Intro"));
 function App() {
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
   const { isTransparent } = useSelector((state: RootState) => state.ui);
+  useEffect(() => {
+    // 항상 위 상태를 메인 프로세스로부터 불러옵니다.
+    (async function () {
+      setAlwaysOnTop(await ipcRenderer.invoke("getAlwaysOnStatus"));
+    })();
+  }, []);
   return (
     <>
       {!isTransparent && (

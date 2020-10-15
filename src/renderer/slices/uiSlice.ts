@@ -1,8 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ipcRenderer } from "electron";
 
+type CurrentDashboardPage =
+  | "main"
+  | "managequiz"
+  | "managelecture"
+  | "listlectureanalysis"
+  | "addnewlecture"
+  | "addnewlecturestudent";
+
 interface UI {
   isTransparent: boolean;
+  currentDashboardPage: CurrentDashboardPage;
 }
 
 interface AlwaysonTop {
@@ -11,6 +20,7 @@ interface AlwaysonTop {
 
 const initialState: UI = {
   isTransparent: false,
+  currentDashboardPage: "main",
 };
 
 const uiSlice = createSlice({
@@ -25,8 +35,15 @@ const uiSlice = createSlice({
       state.isTransparent = false;
       ipcRenderer.send("normalMode", action.payload.alwaysOnTop); // 원래 항상위에를 설정했는지 알아보기 위해
     },
+    changeDashboardPage(state, action: PayloadAction<CurrentDashboardPage>) {
+      state.currentDashboardPage = action.payload;
+    },
   },
 });
 
-export const { setTransparentAction, setNoTransparentAction } = uiSlice.actions;
+export const {
+  setTransparentAction,
+  setNoTransparentAction,
+  changeDashboardPage,
+} = uiSlice.actions;
 export default uiSlice.reducer;

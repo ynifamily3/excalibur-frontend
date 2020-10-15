@@ -1,12 +1,12 @@
 import React, { PropsWithChildren } from "react";
 import Select from "components/atoms/Select";
-
 import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import theme from "styles/theme";
 import Button from "components/atoms/Button";
 import SettingIcon from "components/atoms/svg/Setting";
+import { changeDashboardPage } from "slices/uiSlice";
 
 const Wrapper = styled.div`
   padding: 44px;
@@ -62,6 +62,8 @@ const data = [
 ];
 
 export default function ManageLectureContent(): JSX.Element {
+  const dispatch = useDispatch();
+  const { accountInfo } = useSelector((state: RootState) => state.account);
   return (
     <Wrapper>
       <Top>
@@ -86,6 +88,11 @@ export default function ManageLectureContent(): JSX.Element {
             borderRadius: 0,
             width: "153px",
             height: "55px",
+          }}
+          onClick={() => {
+            if (accountInfo.mode === "student")
+              dispatch(changeDashboardPage("addnewlecturestudent"));
+            else dispatch(changeDashboardPage("addnewlecture"));
           }}
         >
           + 새 강의 추가
