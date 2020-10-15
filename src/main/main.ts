@@ -132,10 +132,10 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     frame: false,
     autoHideMenuBar: true,
-    width: 800,
-    height: 600,
-    minWidth: 800,
-    minHeight: 600,
+    width: 1280,
+    height: 720,
+    minWidth: 1280,
+    minHeight: 720,
     icon: path.join(__dirname, "assets/excalibur.ico"),
     webPreferences: {
       nodeIntegration: true,

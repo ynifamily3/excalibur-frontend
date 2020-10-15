@@ -58,11 +58,11 @@ function App() {
       )}
       <ModalProvider>
         <MemoryRouter>
-          {/* <Route exact key="/" path="/" component={WaitingComponent(Intro)} /> */}
+          <Route exact key="/" path="/" component={WaitingComponent(Intro)} />
           {/* NOTE 디버그 목적 라우트 점핑입니다. */}
-          <Route exact key="/" path="/">
+          {/* <Route exact key="/" path="/">
             <Redirect to="/dashboard" />
-          </Route>
+          </Route> */}
           {routes.map((route) => (
             <Route
               exact
