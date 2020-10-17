@@ -1,6 +1,6 @@
-import Button from "components/atoms/Button";
 import React, { useState } from "react";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import Button from "components/atoms/Button";
 import styled from "styled-components";
 // import { ModalContext } from "contexts/modalContext";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
@@ -111,7 +111,7 @@ const A = styled.a`
 `;
 
 export default function Intro(): JSX.Element {
-  // const history = useHistory();
+  const history = useHistory();
   // const { handleModal } = useContext(ModalContext);
   const [invalidNumber, setInvalidNumber] = useState(0);
   const [formInput, setFormInput] = useState({
@@ -230,7 +230,13 @@ export default function Intro(): JSX.Element {
         >
           <GoogleLogo /> Google 로그인
         </Button>
-        <A href="#" title="회원 가입">
+        <A
+          href="#"
+          title="회원 가입"
+          onClick={() => {
+            history.replace("/signup");
+          }}
+        >
           회원가입
         </A>
         <A href="#" title="비밀번호 재설정">
