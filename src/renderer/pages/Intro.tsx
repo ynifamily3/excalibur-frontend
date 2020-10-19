@@ -11,6 +11,12 @@ import Key from "components/atoms/svg/Key";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import {
+  Radio,
+  RadioGroup,
+  RadioLabel,
+  RadioSelect,
+} from "components/atoms/Radio";
 
 const Wrapper = styled.div`
   margin-top: 7em;
@@ -25,7 +31,7 @@ const LoginForm = styled.div`
   flex-direction: column;
   width: 343px;
   min-height: 237px;
-  margin-top: 50px;
+  margin-top: 30px;
   align-items: center;
 `;
 
@@ -38,63 +44,18 @@ const LoginInputWrapper = styled.div`
 const LoginInput = styled.input`
   border: none;
   background-color: rgb(242, 243, 246);
-  border-radius: 12px;
+  /* border-radius: 12px; */
   width: 100%;
   height: 47px;
   padding-left: 42px;
 `;
 
-const RadioGroup = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-const RadioSelect = styled.div`
-  /* 라디오 셀렉트 패러렐하게 있을 때 첫번째 차일드  */
-  display: flex;
-  margin-right: 25px;
-`;
-const Radio = styled.input`
-  /* width: 20px;
-  height: 20px; */
-
-  &::after {
-    width: 20px;
-    height: 20px;
-    border-radius: 20px;
-    top: -2px;
-    left: -1px;
-    position: relative;
-    border: 2px solid black;
-    background-color: white;
-    content: "";
-    display: inline-block;
-    box-sizing: border-box;
-  }
-  &:checked::after {
-    width: 20px;
-    height: 20px;
-    border-radius: 20px;
-    position: relative;
-    background-color: white;
-    content: "●";
-    font-size: 13px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    visibility: visible;
-    border: 2px solid black;
-    box-sizing: border-box;
-  }
-`;
-const RadioLabel = styled.label`
-  padding-left: 10px;
-  margin-top: -2px;
-  margin-left: 1px;
-`;
-
-const A = styled.a`
+const A = styled.button`
   cursor: default;
-  text-decoration: none;
+  background-color: inherit;
+  border: none;
+  text-decoration: underline;
+  /* text-underline-position: under; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,18 +78,13 @@ export default function Intro(): JSX.Element {
   const [formInput, setFormInput] = useState({
     email: "",
     password: "",
-    loginMode: "student",
   });
 
   function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (event.target.name === "loginMode") {
-      setFormInput({ ...formInput, loginMode: event.currentTarget.value });
-    } else {
-      setFormInput({
-        ...formInput,
-        [event.target.name]: event.currentTarget.value,
-      });
-    }
+    setFormInput({
+      ...formInput,
+      [event.target.name]: event.currentTarget.value,
+    });
   }
 
   function handleEnterKey(event: React.KeyboardEvent<HTMLInputElement>): void {
@@ -148,30 +104,34 @@ export default function Intro(): JSX.Element {
         <ExcaliburLogo />
       </div>
       <LoginForm>
-        <RadioGroup>
-          <RadioSelect>
-            <Radio
-              type="radio"
-              name="loginMode"
-              id="teacher"
-              value="teacher"
-              onChange={handleFormChange}
-              defaultChecked={formInput.loginMode === "teacher"}
-            />
-            <RadioLabel htmlFor="teacher">강의자</RadioLabel>
-          </RadioSelect>
-          <RadioSelect>
-            <Radio
-              type="radio"
-              name="loginMode"
-              id="student"
-              value="student"
-              onChange={handleFormChange}
-              defaultChecked={formInput.loginMode === "student"}
-            />
-            <RadioLabel htmlFor="student">수강생</RadioLabel>
-          </RadioSelect>
-        </RadioGroup>
+        {/* <RadioGroup>
+          <label htmlFor="teacher">
+            <RadioSelect>
+              <Radio
+                type="radio"
+                name="loginMode"
+                id="teacher"
+                value="teacher"
+                onChange={handleFormChange}
+                defaultChecked={formInput.loginMode === "teacher"}
+              />
+              <RadioLabel htmlFor="teacher">강의자</RadioLabel>
+            </RadioSelect>
+          </label>
+          <label htmlFor="student">
+            <RadioSelect>
+              <Radio
+                type="radio"
+                name="loginMode"
+                id="student"
+                value="student"
+                onChange={handleFormChange}
+                defaultChecked={formInput.loginMode === "student"}
+              />
+              <RadioLabel htmlFor="student">수강생</RadioLabel>
+            </RadioSelect>
+          </label>
+        </RadioGroup> */}
         <LoginInputWrapper>
           <div style={{ position: "absolute", left: 10, top: 10 }}>
             <Email />
@@ -212,6 +172,7 @@ export default function Intro(): JSX.Element {
             margin: 0,
             border: "none",
             height: "47px",
+            borderRadius: 0,
           }}
           onClick={handleLoginButton}
         >
@@ -231,15 +192,17 @@ export default function Intro(): JSX.Element {
           <GoogleLogo /> Google 로그인
         </Button>
         <A
-          href="#"
-          title="회원 가입"
           onClick={() => {
             history.replace("/signup");
           }}
         >
           회원가입
         </A>
-        <A href="#" title="비밀번호 재설정">
+        <A
+          onClick={() => {
+            // history.replace("/resetpassword")
+          }}
+        >
           비밀번호 재설정
         </A>
       </LoginForm>

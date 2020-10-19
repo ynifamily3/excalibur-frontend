@@ -3,7 +3,8 @@ import theme from "styles/theme";
 import styled from "styled-components";
 import { RootState } from "rootReducer";
 import { useSelector } from "react-redux";
-import Back from "components/atoms/svg/Back";
+import BackButton from "components/atoms/BackButton";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -30,12 +31,15 @@ interface IGnbProps {
 export default function Gnb(props: IGnbProps): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
   const { titleMessage, backButton } = props;
+  const _history = useHistory();
   return (
     <Wrapper>
       {backButton ? (
-        <div style={{ paddingLeft: 32, paddingRight: 16 }}>
-          <Back />
-        </div>
+        <BackButton
+          onClick={() => {
+            _history.replace(backButton.to);
+          }}
+        />
       ) : (
         <div style={{ paddingLeft: 25 }} />
       )}
