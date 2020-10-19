@@ -3,6 +3,7 @@ import rootReducer from "./rootReducer";
 
 const store = configureStore({
   reducer: rootReducer,
+  devTools: true,
 });
 
 if (process.env.NODE_ENV === "development" && module.hot) {

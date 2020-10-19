@@ -9,6 +9,7 @@ import electron, {
 import path from "path";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
 } from "electron-devtools-installer";
 import isDev from "electron-is-dev";
 
@@ -165,13 +166,13 @@ app.whenReady().then(() => {
     "excalibur-swordmaster-client-my-guid"
   );
   trayIcon.setContextMenu(contextMenu);
-  // if (isDev) {
-  //   console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
-  //   console.log(
-  //     "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
-  //   );
-  //   installExtension(REACT_DEVELOPER_TOOLS)
-  //     .then((name) => console.log(`확장 추가됨:  ${name}`))
-  //     .catch((err) => console.log("에러 발생: ", err));
-  // }
+  if (isDev) {
+    console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
+    console.log(
+      "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
+    );
+    installExtension([REDUX_DEVTOOLS])
+      .then((name) => console.log(`확장 추가됨:  ${name}`))
+      .catch((err) => console.log("에러 발생: ", err));
+  }
 });

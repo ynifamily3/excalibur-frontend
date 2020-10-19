@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Gnb from "components/complex/Gnb";
 import {
@@ -14,6 +14,9 @@ const Wrapper = styled.div`
 import { shell } from "electron";
 import Button from "components/atoms/Button";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "rootReducer";
 
 const SignUpForm = styled.div`
   display: flex;
@@ -72,6 +75,14 @@ const ALabel = styled.label`
 `;
 
 export default function SignUp(): JSX.Element {
+  const history = useHistory();
+  const { isLogin } = useSelector((state: RootState) => state.account);
+
+  useEffect(() => {
+    console.log("Signup effect", isLogin, history);
+    if (isLogin) history.replace("/dashboard");
+  }, [isLogin, history]);
+
   return (
     <Wrapper>
       <Gnb titleMessage="회원가입" backButton={{ to: "/" }} />
@@ -185,21 +196,21 @@ export default function SignUp(): JSX.Element {
           <Input type="email" placeholder="이메일" />
           <Input type="password" placeholder="비밀번호" />
           <Input type="password" placeholder="비밀번호 확인" />
-          <Button
-            color="white"
-            style={{
-              backgroundColor: "#032D3C",
-              marginTop: "20px",
-              width: "100%",
-              margin: 0,
-              border: "none",
-              height: "47px",
-              borderRadius: 0,
-            }}
-            // onClick={handleLoginButton}
-          >
-            회원가입
-          </Button>
+          <div style={{ marginTop: "20px" }}>
+            <Button
+              color="white"
+              style={{
+                backgroundColor: "#032D3C",
+                width: "100%",
+                margin: 0,
+                border: "none",
+                height: "47px",
+                borderRadius: 0,
+              }}
+            >
+              회원가입
+            </Button>
+          </div>
         </div>
       </SignUpForm>
     </Wrapper>

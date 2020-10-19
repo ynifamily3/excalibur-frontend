@@ -9,12 +9,12 @@ import EscButton from "components/atoms/EscButton";
 import Titlebar from "components/restricted/Titlebar";
 import Hover from "components/restricted/Hover";
 import { ModalProvider } from "contexts/modalContext";
-import { MemoryRouter, Redirect, Route } from "react-router-dom";
-import { routes } from "routes";
+import { HashRouter, Route } from "react-router-dom";
+import { routes } from "./routes";
 import WaitingComponent from "hocs/WaitingComponent";
-import queryString from "query-string";
-import AnalysisScreen from "pages/AnalysisScreen";
-import styled from "styled-components";
+// import queryString from "query-string";
+// import AnalysisScreen from "pages/AnalysisScreen";
+// import styled from "styled-components";
 import { RootState } from "rootReducer";
 import { useSelector } from "react-redux";
 const Intro = React.lazy(() => import("pages/Intro"));
@@ -57,12 +57,8 @@ function App() {
         </>
       )}
       <ModalProvider>
-        <MemoryRouter>
+        <HashRouter>
           <Route exact key="/" path="/" component={WaitingComponent(Intro)} />
-          {/* NOTE 디버그 목적 라우트 점핑입니다. */}
-          {/* <Route exact key="/" path="/">
-            <Redirect to="/dashboard" />
-          </Route> */}
           {routes.map((route) => (
             <Route
               exact
@@ -71,7 +67,7 @@ function App() {
               component={route.component}
             />
           ))}
-        </MemoryRouter>
+        </HashRouter>
       </ModalProvider>
     </>
   );

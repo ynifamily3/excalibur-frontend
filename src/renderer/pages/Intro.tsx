@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Button from "components/atoms/Button";
 import styled from "styled-components";
@@ -17,6 +17,9 @@ import {
   RadioLabel,
   RadioSelect,
 } from "components/atoms/Radio";
+import { useDispatch, useSelector } from "react-redux";
+import { signInAction } from "slices/accountSlice";
+import { RootState } from "rootReducer";
 
 const Wrapper = styled.div`
   margin-top: 7em;
@@ -72,13 +75,20 @@ const A = styled.button`
 `;
 
 export default function Intro(): JSX.Element {
-  const history = useHistory();
   // const { handleModal } = useContext(ModalContext);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { isLogin } = useSelector((state: RootState) => state.account);
   const [invalidNumber, setInvalidNumber] = useState(0);
   const [formInput, setFormInput] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    console.log("Intro Effect", isLogin, history);
+    if (isLogin) history.replace("/dashboard");
+  }, [isLogin, history]);
 
   function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
     setFormInput({
@@ -94,8 +104,14 @@ export default function Intro(): JSX.Element {
   }
 
   function handleLoginButton() {
-    // alert("로그인 액션 트리거됨." + JSON.stringify(formInput));
-    setInvalidNumber(invalidNumber + 1);
+    // setInvalidNumber(invalidNumber + 1);
+    dispatch(
+      signInAction({
+        email: formInput.email,
+        mode: "student",
+        password: formInput.password,
+      })
+    );
   }
 
   return (
