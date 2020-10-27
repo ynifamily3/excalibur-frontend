@@ -44,9 +44,18 @@ const accountSlice = createSlice({
         name: "미엘",
       };
     },
+    signOutAction(state) {
+      console.log("로그아웃 액션 리듀서 실행 됨.");
+      state.isLogin = false;
+      state.accountInfo = null;
+    },
   },
 });
 
-export const { signInAction, signUpAction } = accountSlice.actions;
+export const {
+  signInAction,
+  signUpAction,
+  signOutAction,
+} = accountSlice.actions;
 
 export default accountSlice.reducer;

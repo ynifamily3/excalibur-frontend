@@ -47,9 +47,10 @@ export default function Gnb(props: IGnbProps): JSX.Element {
       <TitleMessage>
         {titleMessage
           ? titleMessage
-          : (accountInfo.name + " " + accountInfo.mode === "teacher"
-              ? "강의자"
-              : "수강생") + "님, 환영합니다!"}
+          : accountInfo.name +
+            " " +
+            (accountInfo.mode === "teacher" ? "강의자" : "수강생") +
+            "님, 환영합니다!"}
       </TitleMessage>
       {/* </div> */}
     </Wrapper>

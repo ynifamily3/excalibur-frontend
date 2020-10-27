@@ -30,20 +30,11 @@ export default function Dashboard(): JSX.Element {
   // 필요한 비동기 데이터가 로드 되었을 때 컴포넌트를 렌더링 하기로 함.
   const history = useHistory();
   const [loaded, setLoaded] = useState(0);
-  const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
   const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
-    ipcRenderer.send("resizeWindow", {
-      width: 1280,
-      height: 720,
-      animated: true,
-    });
-  }, []);
-
-  useEffect(() => {
-    console.log("Intro Effect", isLogin, history);
+    console.log("Dashboard Effect", isLogin, history);
     if (!isLogin) history.replace("/");
     else setLoaded(100);
   }, [isLogin, history]);

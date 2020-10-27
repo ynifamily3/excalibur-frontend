@@ -2,21 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Button from "components/atoms/Button";
 import styled from "styled-components";
-// import { ModalContext } from "contexts/modalContext";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 // import QuizModal from "components/complex/QuizModal";
+// import { ModalContext } from "contexts/modalContext";
 // import Minipeople from "components/atoms/svg/MiniPeople";
 import Email from "components/atoms/svg/Email";
 import Key from "components/atoms/svg/Key";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
-import {
-  Radio,
-  RadioGroup,
-  RadioLabel,
-  RadioSelect,
-} from "components/atoms/Radio";
 import { useDispatch, useSelector } from "react-redux";
 import { signInAction } from "slices/accountSlice";
 import { RootState } from "rootReducer";
@@ -104,14 +98,27 @@ export default function Intro(): JSX.Element {
   }
 
   function handleLoginButton() {
+    // DEBUG 로그인 시도에 실패하였을 때 보여줌.
     // setInvalidNumber(invalidNumber + 1);
-    dispatch(
-      signInAction({
-        email: formInput.email,
-        mode: "student",
-        password: formInput.password,
-      })
-    );
+
+    // NOTE debug 목적입니다.
+    if (confirm("학생으로 로그인하시겠습니까?")) {
+      dispatch(
+        signInAction({
+          email: formInput.email,
+          mode: "student",
+          password: formInput.password,
+        })
+      );
+    } else {
+      dispatch(
+        signInAction({
+          email: formInput.email,
+          mode: "teacher",
+          password: formInput.password,
+        })
+      );
+    }
   }
 
   return (
@@ -120,34 +127,6 @@ export default function Intro(): JSX.Element {
         <ExcaliburLogo />
       </div>
       <LoginForm>
-        {/* <RadioGroup>
-          <label htmlFor="teacher">
-            <RadioSelect>
-              <Radio
-                type="radio"
-                name="loginMode"
-                id="teacher"
-                value="teacher"
-                onChange={handleFormChange}
-                defaultChecked={formInput.loginMode === "teacher"}
-              />
-              <RadioLabel htmlFor="teacher">강의자</RadioLabel>
-            </RadioSelect>
-          </label>
-          <label htmlFor="student">
-            <RadioSelect>
-              <Radio
-                type="radio"
-                name="loginMode"
-                id="student"
-                value="student"
-                onChange={handleFormChange}
-                defaultChecked={formInput.loginMode === "student"}
-              />
-              <RadioLabel htmlFor="student">수강생</RadioLabel>
-            </RadioSelect>
-          </label>
-        </RadioGroup> */}
         <LoginInputWrapper>
           <div style={{ position: "absolute", left: 10, top: 10 }}>
             <Email />

@@ -161,7 +161,7 @@ export default function SignUp(): JSX.Element {
                     color: "rgb(96,96,96)",
                     textUnderlinePosition: "under",
                   }}
-                  href="https://exc.miel.dev/#/privacy"
+                  href="https://exc.miel.dev/privacy"
                   title="클릭하면 새 창으로 브라우저가 열립니다."
                   onClick={(e) => {
                     e.preventDefault();

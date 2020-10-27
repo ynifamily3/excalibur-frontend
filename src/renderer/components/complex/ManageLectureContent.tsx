@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import Select from "components/atoms/Select";
 import { RootState } from "rootReducer";
 import { useDispatch, useSelector } from "react-redux";

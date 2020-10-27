@@ -5,7 +5,8 @@ import SettingIcon from "components/atoms/svg/Setting";
 import ProfileIcon from "components/atoms/svg/User";
 import CircleIcon from "components/atoms/svg/Circle";
 import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   background-color: #e7e8eb;
@@ -13,7 +14,7 @@ const Wrapper = styled.div`
   height: 70px;
   display: flex;
   align-items: center;
-  padding: 0 25px;
+  padding-left: 25px;
 `;
 
 const Profile = styled.div`
@@ -35,11 +36,20 @@ const Circle = styled.div`
 const UserStat = styled.div`
   flex: 1;
 `;
-const Setting = styled.div``;
+const Setting = styled.button`
+  border: none;
+  background-color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  width: 48px;
+  height: 48px;
+`;
 
 export default function AsideStats(): JSX.Element {
+  const history = useHistory();
   const { accountInfo } = useSelector((state: RootState) => state.account);
-
   return (
     <Wrapper>
       <Profile>
@@ -49,12 +59,16 @@ export default function AsideStats(): JSX.Element {
         </Circle>
       </Profile>
       <UserStat>
-        <div>수업듣는 미엘</div>
+        <div>{accountInfo.name}</div>
         <div style={{ color: "#777777", fontSize: `${theme.size.h5}px` }}>
           {accountInfo.mode === "student" ? "수강생으" : "강의자"}로 로그인됨
         </div>
       </UserStat>
-      <Setting>
+      <Setting
+        onClick={() => {
+          history.replace("/settings");
+        }}
+      >
         <SettingIcon />
       </Setting>
     </Wrapper>
