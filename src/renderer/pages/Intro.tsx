@@ -1,31 +1,212 @@
-import Button from "components/atoms/Button";
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Button from "components/atoms/Button";
 import styled from "styled-components";
-import { ModalContext } from "contexts/modalContext";
-import QuizModal from "components/complex/QuizModal";
+import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
+// import QuizModal from "components/complex/QuizModal";
+// import { ModalContext } from "contexts/modalContext";
+// import Minipeople from "components/atoms/svg/MiniPeople";
+import Email from "components/atoms/svg/Email";
+import Key from "components/atoms/svg/Key";
+import Novalid from "components/atoms/Novalid";
+import Caution from "components/atoms/svg/Caution";
+import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import { useDispatch, useSelector } from "react-redux";
+import { signInAction } from "slices/accountSlice";
+import { RootState } from "rootReducer";
 
 const Wrapper = styled.div`
   margin-top: 7em;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 90px;
 `;
 
-const H1 = styled.h1`
-  text-align: center;
-  margin: 0;
-  padding: 0;
+const LoginForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 343px;
+  min-height: 237px;
+  margin-top: 30px;
+  align-items: center;
+`;
+
+const LoginInputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  margin-top: 25px;
+`;
+
+const LoginInput = styled.input`
+  border: none;
+  background-color: rgb(242, 243, 246);
+  /* border-radius: 12px; */
+  width: 100%;
+  height: 47px;
+  padding-left: 42px;
+`;
+
+const A = styled.button`
+  cursor: default;
+  background-color: inherit;
+  border: none;
+  text-decoration: underline;
+  /* text-underline-position: under; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(96, 96, 96);
+  width: 150px;
+  height: 30px;
+  border-radius: 5px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  &:active {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 `;
 
 export default function Intro(): JSX.Element {
+  // const { handleModal } = useContext(ModalContext);
   const history = useHistory();
-  const { handleModal } = useContext(ModalContext);
-  // debug purpose
+  const dispatch = useDispatch();
+  const { isLogin } = useSelector((state: RootState) => state.account);
+  const [invalidNumber, setInvalidNumber] = useState(0);
+  const [formInput, setFormInput] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    console.log("Intro Effect", isLogin, history);
+    if (isLogin) history.replace("/dashboard");
+  }, [isLogin, history]);
+
+  function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setFormInput({
+      ...formInput,
+      [event.target.name]: event.currentTarget.value,
+    });
+  }
+
+  function handleEnterKey(event: React.KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === "Enter") {
+      handleLoginButton();
+    }
+  }
+
+  function handleLoginButton() {
+    // DEBUG 로그인 시도에 실패하였을 때 보여줌.
+    // setInvalidNumber(invalidNumber + 1);
+
+    // NOTE debug 목적입니다.
+    if (confirm("학생으로 로그인하시겠습니까?")) {
+      dispatch(
+        signInAction({
+          email: formInput.email,
+          mode: "student",
+          password: formInput.password,
+        })
+      );
+    } else {
+      dispatch(
+        signInAction({
+          email: formInput.email,
+          mode: "teacher",
+          password: formInput.password,
+        })
+      );
+    }
+  }
+
   return (
     <Wrapper>
-      <H1>Excalibur - 비대면 강의 집중력 향상 솔루션</H1>
-      <div>
+      <div style={{ marginLeft: "-50px" }}>
+        <ExcaliburLogo />
+      </div>
+      <LoginForm>
+        <LoginInputWrapper>
+          <div style={{ position: "absolute", left: 10, top: 10 }}>
+            <Email />
+          </div>
+          <LoginInput
+            placeholder="이메일"
+            type="text"
+            name="email"
+            onChange={handleFormChange}
+            onKeyDown={handleEnterKey}
+          />
+        </LoginInputWrapper>
+        <LoginInputWrapper>
+          <div style={{ position: "absolute", left: 10, top: 10 }}>
+            <Key />
+          </div>
+          <LoginInput
+            placeholder="비밀번호"
+            type="password"
+            name="password"
+            onChange={handleFormChange}
+            onKeyDown={handleEnterKey}
+          />
+        </LoginInputWrapper>
+        {invalidNumber > 0 ? (
+          <Novalid style={{ margin: "10px 0" }}>
+            <Caution color={"rgb(245, 87, 93)"} />
+            &nbsp;이메일 또는 비밀번호가 틀립니다. ({invalidNumber}회)
+          </Novalid>
+        ) : (
+          <div style={{ height: "38px" }}></div>
+        )}
+        <Button
+          color="white"
+          style={{
+            backgroundColor: "#032D3C",
+            width: "100%",
+            margin: 0,
+            border: "none",
+            height: "47px",
+            borderRadius: 0,
+          }}
+          onClick={handleLoginButton}
+        >
+          로그인
+        </Button>
+        <Button
+          color="#032D3C"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            backgroundColor: "white",
+            padding: 0,
+            justifyContent: "center",
+          }}
+        >
+          <GoogleLogo /> Google 로그인
+        </Button>
+        <A
+          onClick={() => {
+            history.replace("/signup");
+          }}
+        >
+          회원가입
+        </A>
+        <A
+          onClick={() => {
+            // history.replace("/resetpassword")
+          }}
+        >
+          비밀번호 재설정
+        </A>
+      </LoginForm>
+    </Wrapper>
+  );
+}
+
+{
+  /* <div>
         <Button
           onClick={() => {
             history.replace("/about");
@@ -63,7 +244,5 @@ export default function Intro(): JSX.Element {
         >
           ⚡ 퀴즈 팝업 보기 ⚡ listen
         </Button>
-      </div>
-    </Wrapper>
-  );
+      </div> */
 }

@@ -9,6 +9,7 @@ import electron, {
 import path from "path";
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
 } from "electron-devtools-installer";
 import isDev from "electron-is-dev";
 
@@ -132,14 +133,13 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     frame: false,
     autoHideMenuBar: true,
-    width: 800,
-    height: 600,
-    minWidth: 800,
-    minHeight: 600,
+    width: 1280,
+    height: 720,
+    minWidth: 1280,
+    minHeight: 720,
     icon: path.join(__dirname, "assets/excalibur.ico"),
     webPreferences: {
       nodeIntegration: true,
-      preload: __dirname + "/preload.js",
     },
   });
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -165,13 +165,13 @@ app.whenReady().then(() => {
     "excalibur-swordmaster-client-my-guid"
   );
   trayIcon.setContextMenu(contextMenu);
-  // if (isDev) {
-  //   console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
-  //   console.log(
-  //     "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
-  //   );
-  //   installExtension(REACT_DEVELOPER_TOOLS)
-  //     .then((name) => console.log(`확장 추가됨:  ${name}`))
-  //     .catch((err) => console.log("에러 발생: ", err));
-  // }
+  if (isDev) {
+    // console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
+    // console.log(
+    //   "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
+    // );
+    installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+      .then((name) => console.log(`확장 추가됨:  ${name}`))
+      .catch((err) => console.log("에러 발생: ", err));
+  }
 });

@@ -7,7 +7,9 @@ export const FallBackComponent = (): JSX.Element => {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export default function WaitingComponent<P extends object>(
-  Component: React.LazyExoticComponent<() => JSX.Element>
+  Component: React.LazyExoticComponent<
+    (props?: React.PropsWithChildren<unknown>) => JSX.Element
+  >
 ) {
   // eslint-disable-next-line react/display-name
   return (props: P): JSX.Element => (

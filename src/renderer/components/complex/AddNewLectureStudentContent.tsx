@@ -9,6 +9,7 @@ import Button from "components/atoms/Button";
 import SettingIcon from "components/atoms/svg/Setting";
 import color from "styles/color";
 import Caution from "components/atoms/svg/Caution";
+import Novalid from "components/atoms/Novalid";
 
 const Wrapper = styled.div`
   padding: 44px;
@@ -43,13 +44,6 @@ const Underline = styled.div`
   }};
 `;
 
-const NOVALID = styled.div`
-  margin: 0 auto;
-  margin-top: 44px;
-  color: rgb(245, 87, 93);
-  display: flex;
-`;
-
 export default function AddNewLectureStudentContent(): JSX.Element {
   return (
     <Wrapper>
@@ -71,10 +65,11 @@ export default function AddNewLectureStudentContent(): JSX.Element {
         <Underline order={310} />
         <Underline order={390} />
       </CODEWrapper>
-      <NOVALID>
+      <Novalid>
         <Caution color={"rgb(245, 87, 93)"} />
         &nbsp;초대 코드가 유효하지 않습니다.
-      </NOVALID>
+      </Novalid>
+
       <Button
         color="white"
         style={{

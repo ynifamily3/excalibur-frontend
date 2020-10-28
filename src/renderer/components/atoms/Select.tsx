@@ -1,8 +1,8 @@
+/* eslint-disable import/named */
 import React, { PropsWithChildren } from "react";
-import styled from "styled-components";
+import styled, { StyledComponentProps } from "styled-components";
 import theme from "styles/theme";
 import TriangleElement from "components/atoms/svg/Triangle";
-import { checkPropTypes } from "prop-types";
 import PropTypes from "prop-types";
 
 const SSelect = styled.select`
@@ -31,23 +31,37 @@ const Triangle = styled.div`
   pointer-events: none; /* 클릭가능하도록 함 */
 `;
 
-const Select = (props: PropsWithChildren<{ width?: string }>): JSX.Element => {
-  const { width, ...props2 } = props;
+const Select: React.FC<StyledComponentProps<
+  "select",
+  never,
+  { width?: string },
+  never
+>> = (props) => {
+  const { width, ...restProps } = props;
   return (
     <div
       style={{
         position: "relative",
-        width: `${width ? width : "227px"}`,
+        width: `${width}`,
       }}
     >
       <Triangle>
         <TriangleElement />
       </Triangle>
-      <SSelect {...props2} width={width ? width : "227px"}>
+      <SSelect width={width} {...restProps}>
         {props.children}
       </SSelect>
     </div>
   );
+};
+
+Select.defaultProps = {
+  width: "227px",
+};
+
+Select.propTypes = {
+  width: PropTypes.string,
+  children: PropTypes.node,
 };
 
 export default Select;

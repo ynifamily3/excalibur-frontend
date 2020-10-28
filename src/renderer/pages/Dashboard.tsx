@@ -13,6 +13,7 @@ import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineCont
 import ManageLectureContent from "components/complex/ManageLectureContent";
 import ListLectureAnalysisContent from "components/complex/ListLectureAnalysisContent";
 import AddNewLectureContent from "components/complex/AddNewLectureContent";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,33 +28,20 @@ const BottomWrapper = styled.div`
 
 export default function Dashboard(): JSX.Element {
   // 필요한 비동기 데이터가 로드 되었을 때 컴포넌트를 렌더링 하기로 함.
+  const history = useHistory();
   const [loaded, setLoaded] = useState(0);
-  const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
   const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
-    ipcRenderer.send("resizeWindow", {
-      width: 1280,
-      height: 720,
-      animated: true,
-    });
-  }, []);
+    console.log("Dashboard Effect", isLogin, history);
+    if (!isLogin) history.replace("/");
+    else setLoaded(100);
+  }, [isLogin, history]);
 
-  // NOTE 로그인 상태 주입하기(debug purpose)
-  useEffect(() => {
-    if (!isLogin) {
-      dispatch(
-        signInAction({
-          email: "jongkeun.ch@gmail.com",
-          mode: "teacher",
-          password: "12345",
-        })
-      );
-    } else {
-      setLoaded(100);
-    }
-  }, [isLogin, dispatch]);
+  // useEffect(() => {
+  //   setLoaded(100);
+  // }, []);
 
   return (
     <>
