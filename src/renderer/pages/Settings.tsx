@@ -9,6 +9,7 @@ import Loading from "components/atoms/Loading";
 import { Buttontest as Button } from "components/atoms/Button";
 import { signOutAction } from "slices/accountSlice";
 import theme from "styles/theme";
+import { useCameraList } from "hooks/useCamera";
 
 const Wrapper = styled.div`
   display: flex;
@@ -87,6 +88,11 @@ const Box = styled.div`
   border-radius: 6px;
 `;
 
+interface ICameraSelectionList {
+  label: string;
+  deviceId: string;
+}
+
 const Settings = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -94,12 +100,37 @@ const Settings = (): JSX.Element => {
     (state: RootState) => state.account
   );
   const [loaded, setLoaded] = useState(0);
+  const [status, cameras, triggerCameraList] = useCameraList(false);
+  const [cameraSelectionList, setCameraSelectionList] = useState<
+    ICameraSelectionList[]
+  >([]);
 
   useEffect(() => {
-    console.log("Settings Effect", isLogin, history);
+    console.log("Settings Effect", "로그인여부", isLogin, "히스토리", history);
     if (!isLogin) history.replace("/");
     else setLoaded(100);
   }, [isLogin, history]);
+
+  useEffect(() => {
+    console.log(
+      "카메라리스트 트리거 이펙트: 로그인여부",
+      isLogin,
+      "어카운트인포",
+      accountInfo
+    );
+    if (isLogin && accountInfo.mode === "student") triggerCameraList();
+  }, [triggerCameraList, isLogin, accountInfo]);
+
+  useEffect(() => {
+    if (status === "done")
+      setCameraSelectionList(
+        cameras.map((camera) => {
+          return { label: camera.label, deviceId: camera.deviceId };
+        })
+      );
+    // 정상
+    else setCameraSelectionList([]); // 로딩 중이거나 에러인 상황입니다.
+  }, [status, cameras]);
 
   return (
     <>
@@ -141,6 +172,13 @@ const Settings = (): JSX.Element => {
                           }}
                         >
                           <option>시스템 기본값</option>
+                          {cameraSelectionList.map((camera) => {
+                            return (
+                              <option key={camera.deviceId}>
+                                {camera.label}
+                              </option>
+                            );
+                          })}
                         </Select>
                       </div>
                     </Unit>
