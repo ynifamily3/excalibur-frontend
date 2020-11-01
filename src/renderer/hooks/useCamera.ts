@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type IStatus = "idle" | "loading" | "done" | "error";
 
 /**
  *
  * @param _immediate 즉시 카메라 리스트를 불러올 지 결정합니다.
- * @return [카메라 불러오는 상태, 디바이스 리스트, 디바이스 리로딩 트리거 함수]
+ * @return [카메라리스트 불러오는 상태, 카메라 디바이스 리스트, 디바이스 리로딩 트리거 함수]
  */
 export function useCameraList(
   _immediate = false
@@ -13,7 +13,7 @@ export function useCameraList(
   const [status, setStatus] = useState<IStatus>("idle");
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
-  // NOTE useCallback을 안 쓸 경우 함수가 계속 생성되는 듯하다... (useEffect가 무한 증식 해버림.)
+  // NOTE useCallback을 안 쓸 경우 함수가 계속 생성된다.
   const getDevices = useCallback(async () => {
     setDevices([]);
     setStatus("loading");
@@ -37,6 +37,9 @@ export function useCameraList(
   return [status, devices, getDevices];
 }
 
+/**
+ * @return [카메라 스트림 불러오는 상태, 카메라 스트림, 디바이스 ID가 바뀔 경우 트리거할 함수];
+ */
 export function useCameraStream(): [
   IStatus,
   MediaStream,
@@ -46,15 +49,10 @@ export function useCameraStream(): [
   const [stream, setStream] = useState<MediaStream>();
   const [deviceId, setDeviceId] = useState<string>("");
 
-  const changeDeviceId = (_deviceId: string) => {
-    console.log("트리거됨: ", _deviceId);
+  const changeDeviceId = useCallback((_deviceId: string) => {
     setStatus("loading");
-    // setStream(null);
     setDeviceId(_deviceId);
-    // TODO stream 업데이트
-  };
-
-  // const currentStream = useRef<MediaStream>(undefined);
+  }, []);
 
   const getStream = useCallback(
     async (constraints: MediaTrackConstraints): Promise<MediaStream> => {
@@ -70,10 +68,14 @@ export function useCameraStream(): [
     },
     []
   );
-  // TODO 막 바꿀 때, 기존의 댕글링 스트림을 저장해야 할 것이다.
+
   useEffect(() => {
-    if (deviceId === "") return;
-    const updateStream = async () => {
+    if (deviceId === "" || deviceId === "default") {
+      setStatus("idle");
+      setStream(null);
+      return;
+    }
+    (async () => {
       try {
         setStatus("loading");
         setStream(await getStream({ deviceId: { exact: deviceId } }));
@@ -83,12 +85,17 @@ export function useCameraStream(): [
         setStream(null);
         console.error("카메라 스트림 얻어오기 실패: ", e);
       }
-    };
-    updateStream();
-    return () => {
-      // 카메라 추적 중단 스크립트.
-    };
+    })();
   }, [deviceId, getStream]);
+
+  // 떠날 때 스트림을 정리한다.
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        for (const track of stream.getTracks()) track.stop();
+      }
+    };
+  }, [stream]);
 
   return [status, stream, changeDeviceId];
 }

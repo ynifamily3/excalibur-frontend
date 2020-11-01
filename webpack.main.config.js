@@ -16,7 +16,6 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "./src/main/preload.js", to: "./preload.js" },
         { from: "./assets/**", to: "." },
       ],
     }),

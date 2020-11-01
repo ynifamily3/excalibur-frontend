@@ -34,7 +34,6 @@ export default function Dashboard(): JSX.Element {
   const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   useEffect(() => {
-    console.log("Dashboard Effect", isLogin, history);
     if (!isLogin) history.replace("/");
     else setLoaded(100);
   }, [isLogin, history]);

@@ -80,7 +80,6 @@ export default function Intro(): JSX.Element {
   });
 
   useEffect(() => {
-    console.log("Intro Effect", isLogin, history);
     if (isLogin) history.replace("/dashboard");
   }, [isLogin, history]);
 
@@ -98,8 +97,8 @@ export default function Intro(): JSX.Element {
   }
 
   function handleLoginButton() {
-    // DEBUG 로그인 시도에 실패하였을 때 보여줌.
-    // setInvalidNumber(invalidNumber + 1);
+    // NOTE 로그인 시도에 실패하였을 때 보여줌.
+    setInvalidNumber(invalidNumber + 1);
 
     // NOTE debug 목적입니다.
     if (confirm("학생으로 로그인하시겠습니까?")) {
