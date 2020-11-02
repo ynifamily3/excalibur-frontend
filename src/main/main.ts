@@ -7,10 +7,6 @@ import electron, {
   Tray,
 } from "electron";
 import path from "path";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} from "electron-devtools-installer";
 import isDev from "electron-is-dev";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,11 +14,7 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 let trayIcon = null;
 let mainWindow: BrowserWindow;
-enum MODE {
-  NORMAL,
-  ANALYSIS,
-}
-let mode = MODE.NORMAL;
+
 let isQuiting = isDev ? true : false; // false인데 디버깅하기 싫어서 true로 바꿈
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -83,7 +75,6 @@ function noDuplicateCode({
 }
 
 ipcMain.on("analysisMode", () => {
-  mode = MODE.ANALYSIS;
   noDuplicateCode({ w: 618, h: 102, opacity: 0.7 });
 });
 
@@ -96,20 +87,19 @@ ipcMain.on("analysisOpen", () => {
 });
 
 ipcMain.on("normalMode", (event, argument) => {
-  mode = MODE.NORMAL;
   mainWindow.setAlwaysOnTop(argument);
   mainWindow.setResizable(true);
   mainWindow.setOpacity(1);
-  mainWindow.setMinimumSize(1280, 720);
+  mainWindow.setMinimumSize(800, 600);
   const { x, y, width, height } = electron.screen.getDisplayMatching(
     mainWindow.getBounds()
   ).workArea;
   mainWindow.setPosition(
-    (x + width) / 2 - 1280 / 2,
-    (y + height) / 2 - 720 / 2,
+    (x + width) / 2 - 800 / 2,
+    (y + height) / 2 - 600 / 2,
     true
   );
-  mainWindow.setSize(1280, 720, true);
+  mainWindow.setSize(800, 600, true);
   // mainWindow.center();
 });
 
@@ -133,10 +123,10 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     frame: false,
     autoHideMenuBar: true,
-    width: 1280,
-    height: 720,
-    minWidth: 1280,
-    minHeight: 720,
+    width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600,
     icon: path.join(__dirname, "assets/excalibur.ico"),
     webPreferences: {
       nodeIntegration: true,
@@ -165,13 +155,4 @@ app.whenReady().then(() => {
     "excalibur-swordmaster-client-my-guid"
   );
   trayIcon.setContextMenu(contextMenu);
-  if (isDev) {
-    // console.log("** 개발 모드입니다. 크롬 확장을 설치하겠습니다.");
-    // console.log(
-    //   "https://github.com/MarshallOfSound/electron-devtools-installer#readme"
-    // );
-    installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-      .then((name) => console.log(`확장 추가됨:  ${name}`))
-      .catch((err) => console.log("에러 발생: ", err));
-  }
 });

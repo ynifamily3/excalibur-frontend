@@ -11,16 +11,19 @@ import color from "styles/color";
 import InputText from "components/molecules/InputText";
 
 const Wrapper = styled.div`
-  padding: 44px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   flex: 1;
+  padding-bottom: 0;
 `;
 
 const Top = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 15px;
 `;
 
 const UL = styled.ul`
@@ -28,8 +31,9 @@ const UL = styled.ul`
   padding: 0;
   list-style: none;
   width: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
   height: 100%;
+  padding-bottom: 60px;
 `;
 
 const LI = styled.li`
@@ -37,21 +41,18 @@ const LI = styled.li`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid gray;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  font-size: ${theme.size.h4}px;
+  font-size: ${theme.size.h5}px;
   color: gray;
   height: 60px;
 `;
 
 const LIChild = styled.div`
-  padding: 0 20px;
+  padding: 0 10px;
   &:first-child {
     color: black;
+    text-decoration: underline;
     flex: 1;
-    font-size: ${theme.size.h3}px;
-    padding: "0 20px";
+    font-size: ${theme.size.h5}px;
   }
 `;
 
@@ -84,6 +85,11 @@ export default function ListLectureAnalysisContent(): JSX.Element {
   return (
     <Wrapper>
       <Top>
+        <div style={{ flex: 1 }}>
+          <InputText type="text" placeholder="강의명을 입력하세요..." />
+        </div>
+      </Top>
+      <Top>
         <Select>
           <option>미분류</option>
           <option>2</option>
@@ -98,14 +104,10 @@ export default function ListLectureAnalysisContent(): JSX.Element {
             <option>4</option>
           </Select>
         </div>
-        <div style={{ flex: 1, marginLeft: "16px" }}>
-          <InputText type="text" placeholder="강의명을 입력하세요..." />
-        </div>
       </Top>
       <div
         style={{
           marginBottom: "10px",
-          marginTop: "30px",
           color: "black",
           fontSize: theme.size.h4 + "px",
         }}

@@ -38,10 +38,6 @@ export default function Dashboard(): JSX.Element {
     else setLoaded(100);
   }, [isLogin, history]);
 
-  // useEffect(() => {
-  //   setLoaded(100);
-  // }, []);
-
   return (
     <>
       {loaded === 100 ? (

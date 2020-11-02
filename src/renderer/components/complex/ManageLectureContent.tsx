@@ -9,7 +9,8 @@ import SettingIcon from "components/atoms/svg/Setting";
 import { changeDashboardPage } from "slices/uiSlice";
 
 const Wrapper = styled.div`
-  padding: 44px;
+  padding: 20px;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -19,6 +20,7 @@ const Top = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
 `;
 
 const UL = styled.ul`
@@ -26,8 +28,9 @@ const UL = styled.ul`
   padding: 0;
   list-style: none;
   width: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
   height: 100%;
+  padding-bottom: 60px;
 `;
 
 const LI = styled.li`
@@ -35,21 +38,18 @@ const LI = styled.li`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid gray;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  font-size: ${theme.size.h4}px;
+  font-size: ${theme.size.h5}px;
   color: gray;
   height: 60px;
 `;
 
 const LIChild = styled.div`
-  padding: 0 20px;
+  padding: 0 10px;
   &:first-child {
     color: black;
+    text-decoration: underline;
     flex: 1;
-    font-size: ${theme.size.h3}px;
-    padding: "0 20px";
+    font-size: ${theme.size.h5}px;
   }
 `;
 const data = [
@@ -59,6 +59,15 @@ const data = [
   { title: "시스템 프로그래밍", kind: "싫은과목", createdAt: "2020.08.12." },
   { title: "대구경북의 이해", kind: "꿀교양", createdAt: "2020.08.12." },
   { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
+  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
 ];
 
 export default function ManageLectureContent(): JSX.Element {
@@ -67,20 +76,6 @@ export default function ManageLectureContent(): JSX.Element {
   return (
     <Wrapper>
       <Top>
-        <Select>
-          <option>전체 보기</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-        </Select>
-        <div style={{ flex: 1, marginLeft: "16px" }}>
-          <Select>
-            <option>최신순</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-          </Select>
-        </div>
         <Button
           color="white"
           style={{
@@ -88,6 +83,7 @@ export default function ManageLectureContent(): JSX.Element {
             borderRadius: 0,
             width: "153px",
             height: "55px",
+            marginRight: 0,
           }}
           onClick={() => {
             if (accountInfo.mode === "student")
@@ -98,12 +94,28 @@ export default function ManageLectureContent(): JSX.Element {
           + 새 강의 추가
         </Button>
       </Top>
+      <Top>
+        <Select>
+          <option>전체 보기</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </Select>
+        <div style={{ marginLeft: "16px" }}>
+          <Select>
+            <option>최신순</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+          </Select>
+        </div>
+      </Top>
       <div
         style={{
           marginBottom: "10px",
           marginTop: "30px",
           color: "black",
-          fontSize: theme.size.h4 + "px",
+          fontSize: theme.size.h5 + "px",
         }}
       >
         총 {data.length}개의 강의가 있습니다.

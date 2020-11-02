@@ -1,14 +1,11 @@
 import React from "react";
-import color from "styles/color";
 import styled from "styled-components";
-import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
 import X from "components/atoms/svg/X";
 import theme from "styles/theme";
 import Button from "components/atoms/Button";
 
 const Wrapper = styled.div`
-  padding: 44px;
+  padding: 20px;
   padding-bottom: 0;
   display: flex;
   flex-direction: column;
@@ -20,49 +17,28 @@ const UL = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+  overflow-y: scroll;
 `;
 
 const LI = styled.li`
   display: flex;
   height: auto;
   min-height: 100px;
-  background-color: rgb(221, 235, 247);
-  &:nth-child(odd) {
-    background-color: rgb(226, 240, 217);
-  }
   margin-bottom: 50px;
-`;
-
-const Timeline = styled.div`
-  position: relative;
-  width: 100px;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-  background-color: white;
-  border-right: 44px solid white;
-`;
-
-const Vecline = styled.div<{ dir?: string }>`
-  position: absolute;
-  left: 50%;
-  top: ${(props) => (props.dir === "up" ? "0%" : "100%")};
-  width: 2px;
-  height: 50px;
-  transform: translate(-50%, -50%);
-  background-color: black;
 `;
 
 const QuizBox = styled.div`
   flex: 1;
   display: flex;
-  box-shadow: 7px 7px 30px 0px rgba(211, 211, 211, 1);
-  z-index: 1; /* 그림자 때문에 */
   padding: 18px;
   padding-top: 36px;
   position: relative;
   flex-wrap: wrap;
   padding-bottom: 48px;
+  background-color: rgb(248, 249, 249);
+  border: 1px solid rgb(238, 239, 241);
+  border-radius: 6px;
+  font-size: ${theme.size.h5}px;
 `;
 
 const data = [
@@ -105,18 +81,25 @@ const data = [
 export default function ManageQuizTimeLineContent(): JSX.Element {
   return (
     <Wrapper>
-      <div style={{ fontSize: theme.size.h2, marginBottom: 44 }}>
-        Quiz Timeline
-      </div>
+      <Button
+        color="white"
+        style={{
+          backgroundColor: "#032D3C",
+          borderRadius: 0,
+          width: "200px",
+          padding: "15px",
+          margin: 0,
+          marginBottom: 16,
+          alignSelf: "flex-end",
+          fontSize: `${theme.size.h5}px`,
+        }}
+      >
+        +새로운 퀴즈 출제하기
+      </Button>
       <UL>
         {data.map((x, i) => {
           return (
             <LI key={"question-" + i}>
-              <Timeline>
-                {i !== 0 && <Vecline dir="up" />}
-                {x.time}
-                {i !== data.length - 1 && <Vecline />}
-              </Timeline>
               <QuizBox>
                 <div
                   style={{
@@ -170,7 +153,7 @@ export default function ManageQuizTimeLineContent(): JSX.Element {
                   <div
                     style={{
                       position: "absolute",
-                      right: 48,
+                      right: 16,
                       bottom: 16,
                       color: "gray",
                     }}
@@ -181,20 +164,19 @@ export default function ManageQuizTimeLineContent(): JSX.Element {
                   <div
                     style={{
                       position: "absolute",
-                      display: "flex",
-                      flexDirection: "column",
-                      right: 48,
-                      top: 14,
+                      right: 16,
+                      bottom: 16,
+                      // transform: "translate(-50%, -50%)",
                     }}
                   >
                     <Button
                       color="black"
-                      style={{ margin: 0, marginBottom: 10 }}
+                      style={{ margin: 0, marginRight: 16 }}
                     >
-                      출제
-                    </Button>
-                    <Button color="black" style={{ margin: 0 }}>
                       수정
+                    </Button>
+                    <Button color="blue" style={{ margin: 0 }}>
+                      출제
                     </Button>
                   </div>
                 )}
