@@ -8,6 +8,7 @@ import electron, {
 } from "electron";
 import path from "path";
 import isDev from "electron-is-dev";
+import { exec } from "child_process";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -50,6 +51,25 @@ ipcMain.handle("getAlwaysOnStatus", async () => {
 
 ipcMain.on("hideMainWindow", () => {
   mainWindow.hide();
+});
+
+ipcMain.handle("getProcessList", async () => {
+  const scriptPath =
+    process.platform === "darwin"
+      ? path.resolve(__dirname, "processAnalysisMac.py")
+      : path.resolve(__dirname, "processAnalysisWin.py");
+  const res = new Promise<string>((resolve, reject) => {
+    exec(`python ${scriptPath}`, (err, stdout, stderr) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      } else {
+        console.log("콘솔프린트 보고: ", stderr);
+        resolve(stdout);
+      }
+    });
+  });
+  return await res;
 });
 
 function noDuplicateCode({

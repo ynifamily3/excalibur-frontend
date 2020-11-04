@@ -3,9 +3,6 @@ import { useHistory } from "react-router-dom";
 import Button from "components/atoms/Button";
 import styled from "styled-components";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
-// import QuizModal from "components/complex/QuizModal";
-// import { ModalContext } from "contexts/modalContext";
-// import Minipeople from "components/atoms/svg/MiniPeople";
 import Email from "components/atoms/svg/Email";
 import Key from "components/atoms/svg/Key";
 import Novalid from "components/atoms/Novalid";
@@ -52,7 +49,6 @@ const A = styled.button`
   background-color: inherit;
   border: none;
   text-decoration: underline;
-  /* text-underline-position: under; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -69,7 +65,6 @@ const A = styled.button`
 `;
 
 export default function Intro(): JSX.Element {
-  // const { handleModal } = useContext(ModalContext);
   const history = useHistory();
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
@@ -98,7 +93,7 @@ export default function Intro(): JSX.Element {
 
   function handleLoginButton() {
     // NOTE 로그인 시도에 실패하였을 때 보여줌.
-    setInvalidNumber(invalidNumber + 1);
+    setInvalidNumber((inv) => inv + 1);
 
     // NOTE debug 목적입니다.
     if (confirm("학생으로 로그인하시겠습니까?")) {

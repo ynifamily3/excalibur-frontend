@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import X from "components/atoms/svg/X";
 import theme from "styles/theme";
 import Button from "components/atoms/Button";
+import { QuizBox } from "components/atoms/QuizBox";
+
+// 모달 띄우기
+import { ModalContext } from "contexts/modalContext";
+import AddNewQuizMD from "./AddNewQuizMD";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -25,20 +30,6 @@ const LI = styled.li`
   height: auto;
   min-height: 100px;
   margin-bottom: 50px;
-`;
-
-const QuizBox = styled.div`
-  flex: 1;
-  display: flex;
-  padding: 18px;
-  padding-top: 36px;
-  position: relative;
-  flex-wrap: wrap;
-  padding-bottom: 48px;
-  background-color: rgb(248, 249, 249);
-  border: 1px solid rgb(238, 239, 241);
-  border-radius: 6px;
-  font-size: ${theme.size.h5}px;
 `;
 
 const data = [
@@ -79,6 +70,7 @@ const data = [
 ];
 
 export default function ManageQuizTimeLineContent(): JSX.Element {
+  const { handleModal } = useContext(ModalContext);
   return (
     <Wrapper>
       <Button
@@ -92,6 +84,9 @@ export default function ManageQuizTimeLineContent(): JSX.Element {
           marginBottom: 16,
           alignSelf: "flex-end",
           fontSize: `${theme.size.h5}px`,
+        }}
+        onClick={() => {
+          handleModal(<AddNewQuizMD />);
         }}
       >
         +새로운 퀴즈 출제하기
