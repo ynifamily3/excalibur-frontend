@@ -1,14 +1,13 @@
-import React, { PropsWithChildren } from "react";
-import Select from "components/atoms/Select";
-
-import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import theme from "styles/theme";
 import Button from "components/atoms/Button";
+import Select from "components/atoms/Select";
 import SettingIcon from "components/atoms/svg/Setting";
-import color from "styles/color";
 import InputText from "components/molecules/InputText";
+import React, { PropsWithChildren } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "rootReducer";
+import styled from "styled-components";
+import color from "styles/color";
+import theme from "styles/theme";
 
 const Wrapper = styled.div`
   padding: 20px;

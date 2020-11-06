@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import Button from "components/atoms/Button";
-import styled from "styled-components";
-import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
-import Email from "components/atoms/svg/Email";
-import Key from "components/atoms/svg/Key";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
+import Email from "components/atoms/svg/Email";
+import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import Key from "components/atoms/svg/Key";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signInAction } from "slices/accountSlice";
+import { useHistory } from "react-router-dom";
 import { RootState } from "rootReducer";
+import { signInAction } from "slices/accountSlice";
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   margin-top: 7em;
@@ -38,7 +38,6 @@ const LoginInputWrapper = styled.div`
 const LoginInput = styled.input`
   border: none;
   background-color: rgb(242, 243, 246);
-  /* border-radius: 12px; */
   width: 100%;
   height: 47px;
   padding-left: 42px;

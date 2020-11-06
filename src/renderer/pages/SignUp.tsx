@@ -1,22 +1,23 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import Gnb from "components/complex/Gnb";
+import Button from "components/atoms/Button";
+import { ALabel, Checkbox, CheckboxWrapper } from "components/atoms/Checkbox";
 import {
   Radio,
   RadioGroup,
   RadioLabel,
   RadioSelect,
 } from "components/atoms/Radio";
+import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import Gnb from "components/complex/Gnb";
+import { shell } from "electron";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
+import styled from "styled-components";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
-import { shell } from "electron";
-import Button from "components/atoms/Button";
-import GoogleLogo from "components/atoms/svg/GoogleLogo";
-import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "rootReducer";
 
 const SignUpForm = styled.div`
   display: flex;
@@ -34,44 +35,6 @@ const Input = styled.input`
   padding-left: 20px;
   padding-right: 20px;
   margin-bottom: 10px;
-`;
-
-const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-`;
-
-const Checkbox = styled.input`
-  &::after {
-    width: 20px;
-    height: 20px;
-    position: relative;
-    border: 2px solid black;
-    background-color: white;
-    content: "";
-    display: inline-block;
-    top: -3px;
-    left: -1px;
-    box-sizing: border-box;
-  }
-  &:checked::after {
-    content: "◆";
-    /* font-size: 13px; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-`;
-
-const ALabel = styled.label`
-  padding: 10px;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  &:active {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
 `;
 
 export default function SignUp(): JSX.Element {
