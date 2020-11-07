@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Gnb from "components/complex/Gnb";
-import Select from "components/atoms/Select";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { RootState } from "rootReducer";
@@ -9,6 +8,8 @@ import Loading from "components/atoms/Loading";
 import { Buttontest as Button } from "components/atoms/Button";
 import { signOutAction } from "slices/accountSlice";
 import theme from "styles/theme";
+import SettingsStudent from "components/complex/SettingsStudent";
+import SettingsTeacher from "components/complex/SettingsTeacher";
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,26 +23,6 @@ const Article = styled.div`
   margin: 0 auto;
   height: calc(100vh - 74px);
   overflow: scroll;
-`;
-
-const Unit = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  /* &:not(:first-child) {
-    opacity: 0;
-  } */
-`;
-
-const UnitVertical = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-`;
-
-const UnitHorizontal = styled.div`
-  display: flex;
 `;
 
 const UnitTitle = styled.div`
@@ -87,16 +68,23 @@ const Box = styled.div`
   border-radius: 6px;
 `;
 
+const Unit = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+`;
+
 const Settings = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
+
   const { isLogin, accountInfo } = useSelector(
     (state: RootState) => state.account
   );
   const [loaded, setLoaded] = useState(0);
 
   useEffect(() => {
-    console.log("Settings Effect", isLogin, history);
     if (!isLogin) history.replace("/");
     else setLoaded(100);
   }, [isLogin, history]);
@@ -114,53 +102,19 @@ const Settings = (): JSX.Element => {
                 <Userinfolist>
                   <Userinfo>
                     <div>이름</div>
-                    <div>미엘</div>
+                    <div>{accountInfo.name}</div>
                   </Userinfo>
                   <Userinfo>
                     <div>이메일</div>
-                    <div>jongkeun.ch@gmail.com</div>
+                    <div>{accountInfo.email}</div>
                   </Userinfo>
                 </Userinfolist>
               </Box>
             </Unit>
             {accountInfo.mode === "student" ? (
-              <>
-                {/* <Unit>학생</Unit> */}
-                <UnitHorizontal>
-                  <UnitVertical>
-                    <Unit>
-                      <UnitTitle>카메라</UnitTitle>
-                      <div style={{ paddingRight: "16px" }}>
-                        <Select
-                          width="100%"
-                          style={{
-                            backgroundColor: " rgb(248, 249, 249)",
-                            border: "1px solid rgb(238, 239, 241)",
-                            borderRadius: "6px",
-                            fontSize: 16,
-                          }}
-                        >
-                          <option>시스템 기본값</option>
-                        </Select>
-                      </div>
-                    </Unit>
-                    {/* <Unit>
-                      <UnitTitle>카메라 설정 ...</UnitTitle>
-                      <Select>
-                        <option>시스템 기본값</option>
-                      </Select>
-                    </Unit> */}
-                  </UnitVertical>
-                  <Unit>
-                    <UnitTitle>미리 보기</UnitTitle>
-                    <Box style={{ padding: 0, height: 324 }}></Box>
-                  </Unit>
-                </UnitHorizontal>
-              </>
+              <SettingsStudent />
             ) : (
-              <>
-                <Unit>강의자</Unit>
-              </>
+              <SettingsTeacher />
             )}
             <Unit>
               <Button

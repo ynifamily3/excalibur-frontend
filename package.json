@@ -87,13 +87,15 @@
     "cross-env": "^7.0.2",
     "css-loader": "^4.2.1",
     "electron": "10.1.1",
-    "electron-devtools-installer": "^3.1.1",
     "eslint": "^7.9.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.2",
     "fork-ts-checker-webpack-plugin": "^5.2.0",
+    "import-sort-style-module": "^6.0.0",
     "node-loader": "^1.0.1",
+    "prettier": "^2.1.2",
+    "prettier-plugin-import-sort": "^0.0.6",
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.2",
     "typescript": "^4.0.2",
@@ -113,6 +115,7 @@
     "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
+    "immer": "^7.0.14",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "query-string": "^6.13.5",
@@ -125,5 +128,11 @@
   },
   "resolutions": {
     "styled-components": "^5"
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    }
   }
 }

@@ -1,22 +1,21 @@
-import { hot } from "react-hot-loader";
-import React, { useEffect, useMemo, useState } from "react";
-import { ipcRenderer } from "electron";
 import "normalize.css";
 import "styles/global.css";
 import "animate.css";
-import PinButton from "components/atoms/PinButton";
+
 import EscButton from "components/atoms/EscButton";
-import Titlebar from "components/restricted/Titlebar";
+import PinButton from "components/atoms/PinButton";
 import Hover from "components/restricted/Hover";
+import Titlebar from "components/restricted/Titlebar";
 import { ModalProvider } from "contexts/modalContext";
-import { HashRouter, Route } from "react-router-dom";
-import { routes } from "./routes";
+import { ipcRenderer } from "electron";
 import WaitingComponent from "hocs/WaitingComponent";
-// import queryString from "query-string";
-// import AnalysisScreen from "pages/AnalysisScreen";
-// import styled from "styled-components";
-import { RootState } from "rootReducer";
+import React, { useEffect, useMemo, useState } from "react";
+import { hot } from "react-hot-loader";
 import { useSelector } from "react-redux";
+import { HashRouter, Route } from "react-router-dom";
+import { RootState } from "rootReducer";
+
+import { routes } from "./routes";
 const Intro = React.lazy(() => import("pages/Intro"));
 
 function App() {

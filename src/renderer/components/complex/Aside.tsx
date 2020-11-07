@@ -1,16 +1,18 @@
-import React from "react";
-import color from "styles/color";
-import styled from "styled-components";
-import { RootState } from "rootReducer";
-import { useDispatch, useSelector } from "react-redux";
 import AnalysisButton from "components/atoms/AnlysisButton";
-import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
-import MenuSVG from "components/atoms/svg/Menu";
+import Button from "components/atoms/Button";
+import Back from "components/atoms/svg/Back";
 import AsideStats from "components/complex/AsideStats";
-import { toNormalMode, toAnalysisMode } from "slices/globalStateSlice";
+import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "rootReducer";
+import { toAnalysisMode, toNormalMode } from "slices/globalStateSlice";
 import { changeDashboardPage } from "slices/uiSlice";
-const Wrapper = styled.div`
-  width: 340px;
+import styled from "styled-components";
+import color from "styles/color";
+
+const Wrapper = styled.div<{ isFold: boolean }>`
+  width: ${({ isFold }) => (isFold ? "70px" : "240px")};
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -29,11 +31,20 @@ const MenuCP = styled.button`
   cursor: pointer;
   padding: 0;
   width: 100%;
+  padding-left: 30px;
   height: 60px;
   display: flex;
   align-items: center;
-  color: ${(props: { selected: boolean }) =>
-    props.selected ? "#F2994A" : "black"};
+  background-color: ${(props: { selected: boolean }) =>
+    props.selected ? "rgba(0,0,0,0.2)" : "inherit"};
+  text-decoration: ${(props: { selected: boolean }) =>
+    props.selected ? "underline" : "none"};
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  &:active {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Menu = (
@@ -44,20 +55,10 @@ const Menu = (
 ) => {
   return (
     <MenuCP selected={props.selected} onClick={props.onClick}>
-      <div
-        style={{
-          width: "19px",
-          height: "19px",
-          marginLeft: "41px",
-          marginRight: "41px",
-        }}
-      >
-        <MenuSVG selected={props.selected} />
-      </div>
       <div>{props.children}</div>
       {props.selected && (
         <div
-          style={{ flex: 1, borderRight: "5px solid #F2994A", height: "34px" }}
+          style={{ flex: 1, borderRight: "5px solid black", height: "34px" }}
         ></div>
       )}
     </MenuCP>
@@ -72,10 +73,13 @@ export default function Aside(): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
   const { mode } = useSelector((state: RootState) => state.global);
   const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
-  const dispatch = useDispatch();
 
+  const [fold, setFold] = useState(false);
+
+  const dispatch = useDispatch();
+  if (accountInfo.mode == "student" && mode == "analysis") return <></>;
   return (
-    <Wrapper>
+    <Wrapper isFold={fold}>
       <Menus>
         <Menu
           selected={currentDashboardPage === "main"}
@@ -83,7 +87,8 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("main"));
           }}
         >
-          공통 - 대시보드
+          {fold ? "D" : "대시보드"}
+          {/* 공통 */}
         </Menu>
         <Menu
           selected={currentDashboardPage === "managequiz"}
@@ -91,7 +96,8 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("managequiz"));
           }}
         >
-          강의자 - 퀴즈 관리
+          {fold ? "Q" : "퀴즈 관리"}
+          {/* 강의자 */}
         </Menu>
         <Menu
           selected={currentDashboardPage === "managelecture"}
@@ -99,7 +105,8 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("managelecture"));
           }}
         >
-          공통 - 내 강의 관리
+          {fold ? "L" : "내 강의 관리"}
+          {/* 공통 */}
         </Menu>
         <Menu
           selected={currentDashboardPage === "listlectureanalysis"}
@@ -107,7 +114,16 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("listlectureanalysis"));
           }}
         >
-          공통 - 강의분석 기록 목록
+          {fold ? "A" : "강의분석 기록 목록"}
+          {/* 공통 */}
+        </Menu>
+        <Menu
+          selected={currentDashboardPage === "test"}
+          onClick={() => {
+            dispatch(changeDashboardPage("test"));
+          }}
+        >
+          {fold ? "T" : "테스트"}
         </Menu>
       </Menus>
       {accountInfo.mode == "teacher" &&
@@ -124,7 +140,27 @@ export default function Aside(): JSX.Element {
             }}
           />
         ))}
-      <AsideStats />
+      <Button
+        style={{
+          border: "none",
+          margin: 0,
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          transform: `${fold ? "rotate(180deg)" : "none"}`,
+          backgroundColor: "inherit",
+          outline: "none",
+          cursor: "pointer",
+          padding: "10px",
+          paddingRight: "20px",
+        }}
+        onClick={() => {
+          setFold((prev) => !prev);
+        }}
+      >
+        <Back />
+      </Button>
+      <AsideStats isFold={fold} />
     </Wrapper>
   );
 }

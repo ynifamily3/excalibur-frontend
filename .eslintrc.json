@@ -7,7 +7,8 @@
   "plugins": ["react-hooks"],
   "rules": {
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "warn" // Checks effect dependencies
+    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+    "react/prop-types": "off" // 타입스크립트라서 타입 체킹이 필요없습니다..
   },
   "extends": [
     "eslint:recommended",

@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import Button from "components/atoms/Button";
-import styled from "styled-components";
-import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
-// import QuizModal from "components/complex/QuizModal";
-// import { ModalContext } from "contexts/modalContext";
-// import Minipeople from "components/atoms/svg/MiniPeople";
-import Email from "components/atoms/svg/Email";
-import Key from "components/atoms/svg/Key";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
+import Email from "components/atoms/svg/Email";
+import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
+import Key from "components/atoms/svg/Key";
+import { ipcRenderer } from "electron";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signInAction } from "slices/accountSlice";
+import { useHistory } from "react-router-dom";
 import { RootState } from "rootReducer";
+import { signInAction } from "slices/accountSlice";
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   margin-top: 7em;
@@ -41,7 +39,6 @@ const LoginInputWrapper = styled.div`
 const LoginInput = styled.input`
   border: none;
   background-color: rgb(242, 243, 246);
-  /* border-radius: 12px; */
   width: 100%;
   height: 47px;
   padding-left: 42px;
@@ -52,7 +49,6 @@ const A = styled.button`
   background-color: inherit;
   border: none;
   text-decoration: underline;
-  /* text-underline-position: under; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -69,18 +65,24 @@ const A = styled.button`
 `;
 
 export default function Intro(): JSX.Element {
-  // const { handleModal } = useContext(ModalContext);
   const history = useHistory();
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
   const [invalidNumber, setInvalidNumber] = useState(0);
   const [formInput, setFormInput] = useState({
-    email: "",
-    password: "",
+    email: "jongkeun.ch@gmail.com",
+    password: "1q2w3e4r!",
   });
 
   useEffect(() => {
-    console.log("Intro Effect", isLogin, history);
+    ipcRenderer.send("resizeWindow", {
+      width: 800,
+      height: 600,
+      animated: true,
+    });
+  }, []);
+
+  useEffect(() => {
     if (isLogin) history.replace("/dashboard");
   }, [isLogin, history]);
 
@@ -98,8 +100,8 @@ export default function Intro(): JSX.Element {
   }
 
   function handleLoginButton() {
-    // DEBUG 로그인 시도에 실패하였을 때 보여줌.
-    // setInvalidNumber(invalidNumber + 1);
+    // NOTE 로그인 시도에 실패하였을 때 보여줌.
+    setInvalidNumber((inv) => inv + 1);
 
     // NOTE debug 목적입니다.
     if (confirm("학생으로 로그인하시겠습니까?")) {
@@ -135,6 +137,7 @@ export default function Intro(): JSX.Element {
             placeholder="이메일"
             type="text"
             name="email"
+            value={formInput.email}
             onChange={handleFormChange}
             onKeyDown={handleEnterKey}
           />
@@ -147,6 +150,7 @@ export default function Intro(): JSX.Element {
             placeholder="비밀번호"
             type="password"
             name="password"
+            value={formInput.password}
             onChange={handleFormChange}
             onKeyDown={handleEnterKey}
           />

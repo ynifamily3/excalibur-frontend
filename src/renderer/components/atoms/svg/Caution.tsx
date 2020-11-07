@@ -2,13 +2,17 @@ import React from "react";
 
 export default function Caution({
   color = "#e36262",
+  width = "18",
+  height = "18",
 }: {
   color?: string;
+  width?: string;
+  height?: string;
 }): JSX.Element {
   return (
     <svg
-      width="18"
-      height="18"
+      width={width}
+      height={height}
       viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

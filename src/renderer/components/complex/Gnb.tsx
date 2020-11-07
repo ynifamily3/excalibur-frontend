@@ -1,10 +1,10 @@
-import React from "react";
-import theme from "styles/theme";
-import styled from "styled-components";
-import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
 import BackButton from "components/atoms/BackButton";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
+import styled from "styled-components";
+import theme from "styles/theme";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -32,6 +32,11 @@ export default function Gnb(props: IGnbProps): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
   const { titleMessage, backButton } = props;
   const _history = useHistory();
+
+  const { mode } = useSelector((state: RootState) => state.global);
+
+  if (accountInfo.mode == "student" && mode == "analysis") return <></>;
+
   return (
     <Wrapper>
       {backButton ? (
