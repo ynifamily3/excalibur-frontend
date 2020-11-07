@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import color from "styles/color";
-import styled from "styled-components";
-import { RootState } from "rootReducer";
-import { useDispatch, useSelector } from "react-redux";
 import AnalysisButton from "components/atoms/AnlysisButton";
-import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
-import AsideStats from "components/complex/AsideStats";
-import { toNormalMode, toAnalysisMode } from "slices/globalStateSlice";
-import { changeDashboardPage } from "slices/uiSlice";
-import Back from "components/atoms/svg/Back";
 import Button from "components/atoms/Button";
+import Back from "components/atoms/svg/Back";
+import AsideStats from "components/complex/AsideStats";
+import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "rootReducer";
+import { toAnalysisMode, toNormalMode } from "slices/globalStateSlice";
+import { changeDashboardPage } from "slices/uiSlice";
+import styled from "styled-components";
+import color from "styles/color";
 
 const Wrapper = styled.div<{ isFold: boolean }>`
   width: ${({ isFold }) => (isFold ? "70px" : "240px")};
@@ -77,7 +77,7 @@ export default function Aside(): JSX.Element {
   const [fold, setFold] = useState(false);
 
   const dispatch = useDispatch();
-
+  if (accountInfo.mode == "student" && mode == "analysis") return <></>;
   return (
     <Wrapper isFold={fold}>
       <Menus>
@@ -116,6 +116,14 @@ export default function Aside(): JSX.Element {
         >
           {fold ? "A" : "강의분석 기록 목록"}
           {/* 공통 */}
+        </Menu>
+        <Menu
+          selected={currentDashboardPage === "test"}
+          onClick={() => {
+            dispatch(changeDashboardPage("test"));
+          }}
+        >
+          {fold ? "T" : "테스트"}
         </Menu>
       </Menus>
       {accountInfo.mode == "teacher" &&

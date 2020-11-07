@@ -1,14 +1,15 @@
+import { exec } from "child_process";
+import path from "path";
+
 import electron, {
-  app,
   BrowserWindow,
-  ipcMain,
   Menu,
   Notification,
   Tray,
+  app,
+  ipcMain,
 } from "electron";
-import path from "path";
 import isDev from "electron-is-dev";
-import { exec } from "child_process";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -25,8 +26,28 @@ if (require("electron-squirrel-startup")) {
 
 ipcMain.on("resizeWindow", (event, argument) => {
   const { width, height, animated } = argument;
-  mainWindow.setSize(width, height, animated);
   mainWindow.setMinimumSize(width, height);
+  mainWindow.setSize(width, height, animated);
+});
+
+ipcMain.on("positionWindow", (event, argument) => {
+  const { w, h } = argument;
+  const { x, y, width, height } = electron.screen.getDisplayMatching(
+    mainWindow.getBounds()
+  ).workArea;
+  mainWindow.setPosition(x + width - w, y + height - h - 100, true);
+});
+
+ipcMain.on("centerWindow", (event, argument) => {
+  const { _w, _h } = argument;
+  const { x, y, width, height } = electron.screen.getDisplayMatching(
+    mainWindow.getBounds()
+  ).workArea;
+  mainWindow.setPosition(
+    (x + width) / 2 - (_w ? _w : 800) / 2,
+    (y + height) / 2 - (_h ? _h : 600) / 2,
+    true
+  );
 });
 
 ipcMain.on("notification", (event, argument) => {
@@ -95,7 +116,11 @@ function noDuplicateCode({
 }
 
 ipcMain.on("analysisMode", () => {
-  noDuplicateCode({ w: 618, h: 102, opacity: 0.7 });
+  noDuplicateCode({
+    w: 618,
+    h: 102,
+    opacity: 0.7,
+  });
 });
 
 ipcMain.on("analysisFold", () => {

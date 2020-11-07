@@ -1,11 +1,23 @@
 // import { ALabel, Checkbox, CheckboxWrapper } from "components/atoms/Checkbox";
 import { QuizBox as QuizBoxOriginal } from "components/atoms/QuizBox";
-import { Radio, RadioLabel, RadioSelect } from "components/atoms/Radio";
+import {
+  Radio,
+  RadioGroup,
+  RadioLabel,
+  RadioSelect,
+} from "components/atoms/Radio";
 import X from "components/atoms/svg/X";
 import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import p from "immer";
-import React, { FC, useContext, useRef, useState } from "react";
+import React, {
+  FC,
+  createRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -77,75 +89,12 @@ const AddNewQuizMD: FC = () => {
     answer: number;
   }>({ text: ["", "", ""], answer: -1 });
 
-  const selectionRef = useRef(null);
-  // const isLoadingRef = useRef(false);
-
   const handleChange = () => {
     QuizBoxRef.current.style.height = textAreaRef.current.scrollHeight + "px";
     textAreaRef.current.style.height = "auto"; // 이 구문 없으면 안 줄어든다. (근데 이게 있으면 애니메이션이 안 된다..)
     const saved = textAreaRef.current.scrollHeight;
     textAreaRef.current.style.height = saved + 20 + "px";
   };
-
-  const selections = selState.text.map((text, i) => {
-    return (
-      <Selection
-        key={"sel" + i}
-        ref={(ref) => {
-          if (selections.length - 1 === i) {
-            selectionRef.current = ref;
-          }
-        }}
-      >
-        <div
-          style={{
-            display: "inline-block",
-            flex: 1,
-            marginRight: "16px",
-            height: "32px",
-          }}
-        >
-          <input
-            type="text"
-            value={selState.text[i]}
-            onChange={(e) => {
-              const r = p(selState, (draft) => {
-                draft.text[i] = e.target.value;
-              });
-              setSelState(r);
-            }}
-            placeholder={"선지를 입력해 주세요."}
-            style={{
-              height: "32px",
-              paddingLeft: "16px",
-              border: "1px solid rgb(238, 239, 241)",
-              borderRadius: "6px",
-              width: "100%",
-            }}
-          />
-        </div>
-        <label htmlFor={"sel-" + i}>
-          <RadioSelect style={{ marginRight: 0 }}>
-            <Radio
-              type="radio"
-              name="selection"
-              id={"sel-" + i}
-              value={"sel-" + i}
-              checked={selState.answer === i}
-              onChange={() => {
-                setSelState(
-                  p(selState, (draft) => {
-                    draft.answer = i;
-                  })
-                );
-              }}
-            />
-            <RadioLabel htmlFor={"sel-" + i}>정답</RadioLabel>
-          </RadioSelect>
-        </label>
-      </Selection>
-    );
-  });
 
   return (
     <Wrapper>
@@ -180,7 +129,58 @@ const AddNewQuizMD: FC = () => {
               + 퀴즈 등록
             </Button>
           </div>
-          {selections}
+          {selState.text.map((text, i) => {
+            return (
+              <Selection key={"sel" + i}>
+                <div
+                  style={{
+                    display: "inline-block",
+                    flex: 1,
+                    marginRight: "16px",
+                    height: "32px",
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={selState.text[i]}
+                    onChange={(e) => {
+                      const r = p(selState, (draft) => {
+                        draft.text[i] = e.target.value;
+                      });
+                      setSelState(r);
+                    }}
+                    placeholder={"선지를 입력해 주세요."}
+                    style={{
+                      height: "32px",
+                      paddingLeft: "16px",
+                      border: "1px solid rgb(238, 239, 241)",
+                      borderRadius: "6px",
+                      width: "100%",
+                    }}
+                  />
+                </div>
+                <label htmlFor={"sel-" + i}>
+                  <RadioSelect style={{ marginRight: 0 }}>
+                    <Radio
+                      type="radio"
+                      name="selection"
+                      id={"sel-" + i}
+                      value={"sel-" + i}
+                      checked={selState.answer === i}
+                      onChange={() => {
+                        setSelState(
+                          p(selState, (draft) => {
+                            draft.answer = i;
+                          })
+                        );
+                      }}
+                    />
+                    <RadioLabel htmlFor={"sel-" + i}>정답</RadioLabel>
+                  </RadioSelect>
+                </label>
+              </Selection>
+            );
+          })}
         </SelectionWrapper>
       </QuizBox>
       <Button

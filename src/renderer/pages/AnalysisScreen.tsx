@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import Button from "components/atoms/Button";
-import { useDispatch } from "react-redux";
-import { setTransparentAction, setNoTransparentAction } from "slices/uiSlice";
 import { ipcRenderer } from "electron";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { setNoTransparentAction, setTransparentAction } from "slices/uiSlice";
+import styled from "styled-components";
 
 const Dragable = styled.div`
   cursor: move;

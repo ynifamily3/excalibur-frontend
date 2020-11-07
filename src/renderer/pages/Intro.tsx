@@ -5,6 +5,7 @@ import Email from "components/atoms/svg/Email";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
 import Key from "components/atoms/svg/Key";
+import { ipcRenderer } from "electron";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -69,9 +70,17 @@ export default function Intro(): JSX.Element {
   const { isLogin } = useSelector((state: RootState) => state.account);
   const [invalidNumber, setInvalidNumber] = useState(0);
   const [formInput, setFormInput] = useState({
-    email: "",
-    password: "",
+    email: "jongkeun.ch@gmail.com",
+    password: "1q2w3e4r!",
   });
+
+  useEffect(() => {
+    ipcRenderer.send("resizeWindow", {
+      width: 800,
+      height: 600,
+      animated: true,
+    });
+  }, []);
 
   useEffect(() => {
     if (isLogin) history.replace("/dashboard");
@@ -128,6 +137,7 @@ export default function Intro(): JSX.Element {
             placeholder="이메일"
             type="text"
             name="email"
+            value={formInput.email}
             onChange={handleFormChange}
             onKeyDown={handleEnterKey}
           />
@@ -140,6 +150,7 @@ export default function Intro(): JSX.Element {
             placeholder="비밀번호"
             type="password"
             name="password"
+            value={formInput.password}
             onChange={handleFormChange}
             onKeyDown={handleEnterKey}
           />

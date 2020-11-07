@@ -1,19 +1,21 @@
-import Gnb from "components/complex/Gnb";
-import React, { useEffect, useState } from "react";
-import { ipcRenderer } from "electron";
-import { RootState } from "rootReducer";
-import { useSelector, useDispatch } from "react-redux";
-import { signInAction } from "slices/accountSlice";
 import Loading from "components/atoms/Loading";
-import styled from "styled-components";
-import Aside from "components/complex/Aside";
-import AddNewLectureStudentContent from "components/complex/AddNewLectureStudentContent";
-import DashboardMain from "components/complex/DashboardMain";
-import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineContent";
-import ManageLectureContent from "components/complex/ManageLectureContent";
-import ListLectureAnalysisContent from "components/complex/ListLectureAnalysisContent";
 import AddNewLectureContent from "components/complex/AddNewLectureContent";
+import AddNewLectureStudentContent from "components/complex/AddNewLectureStudentContent";
+import Aside from "components/complex/Aside";
+import DashboardMain from "components/complex/DashboardMain";
+import Gnb from "components/complex/Gnb";
+import ListLectureAnalysisContent from "components/complex/ListLectureAnalysisContent";
+import ManageLectureContent from "components/complex/ManageLectureContent";
+import ManageQuizTimeLineContent from "components/complex/ManageQuizTimeLineContent";
+import { ipcRenderer } from "electron";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
+import { signInAction } from "slices/accountSlice";
+import styled from "styled-components";
+
+import { AnalysisStudentScreen } from "./AnalysisStudentScreen";
 
 const Wrapper = styled.div`
   display: flex;
@@ -59,6 +61,8 @@ export default function Dashboard(): JSX.Element {
                   return <AddNewLectureContent />;
                 case "addnewlecturestudent":
                   return <AddNewLectureStudentContent />;
+                case "test":
+                  return <AnalysisStudentScreen />;
                 default:
                   return <div>-ㅅ-</div>;
               }

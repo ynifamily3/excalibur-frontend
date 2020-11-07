@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
-import theme from "styles/theme";
+import { CameraBox } from "components/atoms/CameraBox";
 import Select from "components/atoms/Select";
 import { useCameraList, useCameraStream } from "hooks/useCamera";
 import { useLocalStorage } from "hooks/useLocalStorage";
+import React, { useEffect, useRef } from "react";
+import styled from "styled-components";
+import theme from "styles/theme";
 
 const UnitHorizontal = styled.div`
   display: flex;
@@ -25,19 +26,6 @@ const UnitTitle = styled.div`
   font-size: ${theme.size.h4}px;
   margin-top: 18px;
   margin-bottom: 18px;
-`;
-
-const CameraBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 18px;
-  padding: 0;
-  width: 100%;
-  height: 324px;
-  background-color: rgb(248, 249, 249);
-  border: 1px solid rgb(238, 239, 241);
-  border-radius: 6px;
 `;
 
 const SettingsStudent = (): JSX.Element => {

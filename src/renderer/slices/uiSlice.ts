@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ipcRenderer } from "electron";
 
 type CurrentDashboardPage =
@@ -7,7 +7,8 @@ type CurrentDashboardPage =
   | "managelecture"
   | "listlectureanalysis"
   | "addnewlecture"
-  | "addnewlecturestudent";
+  | "addnewlecturestudent"
+  | "test";
 
 interface UI {
   isTransparent: boolean;
@@ -27,6 +28,7 @@ const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
+    // Student라면 화면을 투명 처리할 필요는 없다. (분석 창이 나와야 함.) 사실 학생이면 얘가 할 일은 없다..
     setTransparentAction(state) {
       state.isTransparent = true;
       ipcRenderer.send("analysisMode");
