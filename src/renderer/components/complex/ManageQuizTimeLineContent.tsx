@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import styled from "styled-components";
-import X from "components/atoms/svg/X";
-import theme from "styles/theme";
 import Button from "components/atoms/Button";
 import { QuizBox } from "components/atoms/QuizBox";
-
+import X from "components/atoms/svg/X";
 // 모달 띄우기
 import { ModalContext } from "contexts/modalContext";
+import React, { useContext } from "react";
+import styled from "styled-components";
+import theme from "styles/theme";
+
 import AddNewQuizMD from "./AddNewQuizMD";
 
 const Wrapper = styled.div`

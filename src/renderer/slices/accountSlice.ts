@@ -1,24 +1,22 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface Account {
   isLogin: boolean;
   accountInfo: null | {
     mode: "student" | "teacher";
-    name: string;
+    type: "normal" | "google";
     email: string;
+    id: number;
+    name: string;
   };
-}
-
-interface SignUp {
-  name: string;
-  email: string;
-  password: string;
 }
 
 interface SignIn {
   mode: "student" | "teacher";
+  type: "normal" | "google";
   email: string;
-  password: string;
+  id: number;
+  name: string;
 }
 
 const initialState: Account = {
@@ -30,31 +28,24 @@ const accountSlice = createSlice({
   name: "account",
   initialState,
   reducers: {
-    signUpAction(state, action: PayloadAction<SignUp>) {
-      const { name, email, password } = action.payload;
-    },
     signInAction(state, action: PayloadAction<SignIn>) {
-      const { mode, email, password } = action.payload;
+      const { mode, email, type, id, name } = action.payload;
       state.isLogin = true;
-      // NOTE 이중화는 안 된다.. 이런! => state.accountInfo.email = "어쩌구" 는 작동하지 않는다.
       state.accountInfo = {
         email,
         mode,
-        name: "미엘",
+        name,
+        type,
+        id,
       };
     },
     signOutAction(state) {
-      console.log("로그아웃 액션 리듀서 실행 됨.");
       state.isLogin = false;
       state.accountInfo = null;
     },
   },
 });
 
-export const {
-  signInAction,
-  signUpAction,
-  signOutAction,
-} = accountSlice.actions;
+export const { signInAction, signOutAction } = accountSlice.actions;
 
 export default accountSlice.reducer;

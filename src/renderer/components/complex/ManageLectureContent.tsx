@@ -1,12 +1,13 @@
-import React from "react";
+import Button from "components/atoms/Button";
 import Select from "components/atoms/Select";
-import { RootState } from "rootReducer";
+import SettingIcon from "components/atoms/svg/Setting";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { mockData as data } from "repos/course";
+import { RootState } from "rootReducer";
+import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
 import theme from "styles/theme";
-import Button from "components/atoms/Button";
-import SettingIcon from "components/atoms/svg/Setting";
-import { changeDashboardPage } from "slices/uiSlice";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -52,23 +53,6 @@ const LIChild = styled.div`
     font-size: ${theme.size.h5}px;
   }
 `;
-const data = [
-  { title: "일어 I", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "운영체제", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "독도의 이해", kind: "좋은과목", createdAt: "2020.08.12." },
-  { title: "시스템 프로그래밍", kind: "싫은과목", createdAt: "2020.08.12." },
-  { title: "대구경북의 이해", kind: "꿀교양", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-  { title: "오토마타및형식이론", kind: "미분류", createdAt: "2020.08.12." },
-];
 
 export default function ManageLectureContent(): JSX.Element {
   const dispatch = useDispatch();
@@ -137,3 +121,18 @@ export default function ManageLectureContent(): JSX.Element {
     </Wrapper>
   );
 }
+
+// {accountInfo.mode == "teacher" &&
+//         (mode === "normal" ? (
+//           <AnalysisButton
+//             onClick={() => {
+//               dispatch(toAnalysisMode());
+//             }}
+//           />
+//         ) : (
+//           <ExitAnalysisButton
+//             onClick={() => {
+//               dispatch(toNormalMode());
+//             }}
+//           />
+//         ))}

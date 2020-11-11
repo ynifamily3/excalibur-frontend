@@ -1,3 +1,4 @@
+import Button from "components/atoms/Button";
 import { CameraBox } from "components/atoms/CameraBox";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
@@ -21,6 +22,13 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
+const CameraBoxWrapper = styled.div`
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+`;
+
 const Novalid2 = styled(Novalid)`
   margin: 10px 0;
   text-align: center;
@@ -33,7 +41,19 @@ const Title = styled.div`
   margin: 16px 0;
 `;
 
-const Bottom = styled(Title)``;
+const Bottom = styled(Title)`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+`;
+
+const Button2 = styled(Button)`
+  margin: 0;
+  background-color: rgb(248, 249, 249);
+  border: 1px solid rgb(238, 239, 241);
+  color: rgb(98, 98, 98);
+  border-radius: 6px;
+`;
 
 const AnalysisStudentScreen: FC = () => {
   const dispatch = useDispatch();
@@ -57,7 +77,7 @@ const AnalysisStudentScreen: FC = () => {
     });
     ipcRenderer.send("positionWindow", { w: 300, h: 500 });
     return () => {
-      // 디버깅 시 밑 잠깐 주석 처리
+      // NOTE 디버깅 시 밑 잠깐 주석 처리
       dispatch(toNormalMode());
       ipcRenderer.send("resizeWindow", {
         width: 800,
@@ -92,45 +112,53 @@ const AnalysisStudentScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Title>물리 - 최종근 교수님</Title>
-      <CameraBox
-        ref={cameraBox}
-        style={{ width: "250px", height: "250px", transition: "height 0.5s" }}
-      >
-        {streamStatus === "idle" && <>...</>}
-        {streamStatus === "loading" && <>불러오는 중...</>}
-        {streamStatus === "error" && (
-          <Novalid2>
-            <Caution color={"rgb(245, 87, 93)"} width="45" height="45" />
-            <div>카메라가 설정이 되지 않았어요! </div>
-            <div>카메라 설정을 하셔서 본인의 집중력을 알려주세요!</div>
-          </Novalid2>
-        )}
-        {streamStatus === "done" && showVideo && (
-          <video autoPlay={true} ref={video} width="100%" height="100%"></video>
-        )}
-        {streamStatus === "done" && !showVideo && (
-          <Novalid2 style={{ color: "rgb(114,114,114)" }}>
-            <Caution color={"rgb(114, 114, 114)"} width="45" height="45" />
-            <div>미리보기 화면을 숨겼습니다.</div>
-          </Novalid2>
-        )}
-      </CameraBox>
+      <Title>물리 1차시 - 최미엘 교수님</Title>
+      <CameraBoxWrapper>
+        <CameraBox
+          ref={cameraBox}
+          style={{ width: "250px", height: "250px", transition: "height 0.5s" }}
+        >
+          {streamStatus === "idle" && <>...</>}
+          {streamStatus === "loading" && <>불러오는 중...</>}
+          {streamStatus === "error" && (
+            <Novalid2>
+              <Caution color={"rgb(245, 87, 93)"} width="45" height="45" />
+              <div>카메라가 설정이 되지 않았어요! </div>
+              <div>카메라 설정을 하셔서 본인의 집중력을 알려주세요!</div>
+            </Novalid2>
+          )}
+          {streamStatus === "done" && showVideo && (
+            <video
+              autoPlay={true}
+              ref={video}
+              width="100%"
+              height="100%"
+            ></video>
+          )}
+          {streamStatus === "done" && !showVideo && (
+            <Novalid2 style={{ color: "rgb(114,114,114)" }}>
+              <div>미리보기 화면을 숨겼습니다.</div>
+            </Novalid2>
+          )}
+        </CameraBox>
+      </CameraBoxWrapper>
       <Bottom>
-        <button
+        <Button2
           onClick={() => {
             setShowVideo((sv) => !sv);
           }}
         >
           미리보기 {showVideo ? "숨기기" : "보이기"}
-        </button>
-        <button
+        </Button2>
+        <Button2
           onClick={() => {
-            dispatch(changeDashboardPage("main"));
+            if (confirm("수업이 모두 끝나셨습니까?")) {
+              dispatch(changeDashboardPage("main"));
+            }
           }}
         >
-          back
-        </button>
+          종료하고 나가기
+        </Button2>
       </Bottom>
     </Wrapper>
   );

@@ -5,18 +5,25 @@ import X from "components/atoms/svg/X";
 import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import p from "immer";
-import React, { FC, useContext, useRef, useState } from "react";
+import React, { FC, useCallback, useContext, useRef, useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  overflow: scroll;
+  position: relative;
 `;
+
+const ScrollWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const QuizBox = styled(QuizBoxOriginal)`
-  margin-top: 16px;
+  margin: 16px 0;
   height: 70px;
   position: relative;
-  padding: 0;
   padding: 16px;
   transition: height 1s;
 `;
@@ -39,7 +46,7 @@ export const SelectionWrapper = styled.div`
   width: 100%;
 `;
 
-export const Selection = styled.div`
+const Selection = styled.div`
   border: inherit;
   border-radius: inherit;
   width: 100%;
@@ -55,8 +62,10 @@ const Textarea = styled.textarea`
   border: inherit;
   border-radius: inherit;
   padding: 16px;
+  background-color: white;
   transition: height 1s;
 `;
+
 export type ISelectionMockFC = {
   mock: boolean;
 };
@@ -72,6 +81,7 @@ const AddNewQuizMD: FC = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>();
   const QuizBoxRef = useRef<HTMLDivElement>();
   const { handleModal } = useContext(ModalContext);
+  const [contentState, setContentState] = useState("");
   const [selState, setSelState] = useState<{
     text: string[];
     answer: number;
@@ -80,12 +90,23 @@ const AddNewQuizMD: FC = () => {
   const selectionRef = useRef(null);
   // const isLoadingRef = useRef(false);
 
-  const handleChange = () => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContentState(e.target.value);
     QuizBoxRef.current.style.height = textAreaRef.current.scrollHeight + "px";
     textAreaRef.current.style.height = "auto"; // 이 구문 없으면 안 줄어든다. (근데 이게 있으면 애니메이션이 안 된다..)
     const saved = textAreaRef.current.scrollHeight;
     textAreaRef.current.style.height = saved + 20 + "px";
   };
+
+  const isValid = useCallback(() => {
+    return (
+      selState.answer !== -1 &&
+      selState.text[0].trim().length > 0 &&
+      selState.text[1].trim().length > 0 &&
+      selState.text[2].trim().length > 0 &&
+      contentState.trim().length > 0
+    );
+  }, [contentState, selState.answer, selState.text])();
 
   const selections = selState.text.map((text, i) => {
     return (
@@ -149,41 +170,49 @@ const AddNewQuizMD: FC = () => {
 
   return (
     <Wrapper>
-      <Button onClick={() => handleModal()}>
+      <Button onClick={handleModal}>
         <X width="32" height="32" color="black" />
       </Button>
-      <h2>퀴즈 출제</h2>
-      <QuizBox ref={QuizBoxRef}>
-        <Textarea
-          ref={textAreaRef}
-          placeholder="퀴즈 내용을 입력해 주세요."
-          onChange={handleChange}
-        ></Textarea>
-        <SelectionWrapper>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <h3 style={{ flex: 1 }}>선지를 입력해 주세요.</h3>
-            <Button
-              style={{
-                padding: "16px",
-                color: "white",
-                backgroundColor: "rgb(3, 45, 60)",
-                border: "1px solid rgb(238, 239, 241)",
-                borderRadius: "6px",
-              }}
-            >
-              + 퀴즈 등록
-            </Button>
-          </div>
-          {selections}
-        </SelectionWrapper>
-      </QuizBox>
-      <Button
+      <div style={{ display: "flex" }}>
+        <h2 style={{ flex: 1 }}>퀴즈 출제</h2>
+        <Button
+          style={{
+            padding: "16px",
+            color: "white",
+            backgroundColor: "rgb(3, 45, 60)",
+            border: "1px solid rgb(238, 239, 241)",
+            borderRadius: "6px",
+            opacity: !isValid ? "0.5" : "1",
+          }}
+          disabled={!isValid}
+        >
+          + 퀴즈 등록
+        </Button>
+      </div>
+      <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
+        <ScrollWrapper>
+          <QuizBox ref={QuizBoxRef}>
+            <Textarea
+              ref={textAreaRef}
+              placeholder="퀴즈 내용을 입력해 주세요."
+              onChange={handleChange}
+              value={contentState}
+            ></Textarea>
+            <SelectionWrapper>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <h3 style={{ flex: 1 }}>선지를 입력해 주세요.</h3>
+              </div>
+              {selections}
+            </SelectionWrapper>
+          </QuizBox>
+
+          {/* <Button
         style={{ backgroundColor: "skyblue", padding: 30 }}
         onClick={() => {
           (async function () {
@@ -193,7 +222,9 @@ const AddNewQuizMD: FC = () => {
         }}
       >
         Process 가져오기
-      </Button>
+      </Button> */}
+        </ScrollWrapper>
+      </div>
     </Wrapper>
   );
 };

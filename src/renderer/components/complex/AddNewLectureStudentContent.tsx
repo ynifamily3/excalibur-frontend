@@ -1,15 +1,14 @@
-import React, { PropsWithChildren } from "react";
-import Select from "components/atoms/Select";
-
-import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import theme from "styles/theme";
 import Button from "components/atoms/Button";
-import SettingIcon from "components/atoms/svg/Setting";
-import color from "styles/color";
-import Caution from "components/atoms/svg/Caution";
 import Novalid from "components/atoms/Novalid";
+import Select from "components/atoms/Select";
+import Caution from "components/atoms/svg/Caution";
+import SettingIcon from "components/atoms/svg/Setting";
+import React, { PropsWithChildren } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "rootReducer";
+import styled from "styled-components";
+import color from "styles/color";
+import theme from "styles/theme";
 
 const Wrapper = styled.div`
   padding: 44px;

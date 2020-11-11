@@ -172,11 +172,13 @@ const createWindow = (): void => {
     height: 600,
     minWidth: 800,
     minHeight: 600,
-    icon: path.join(__dirname, "assets/excalibur.ico"),
+    icon: path.join(__dirname, "assets/icons/mac/icon.icns"),
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
+  app.commandLine.appendSwitch("disable-web-security");
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   isDev && mainWindow.webContents.openDevTools();
 

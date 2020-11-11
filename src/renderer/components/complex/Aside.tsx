@@ -90,15 +90,17 @@ export default function Aside(): JSX.Element {
           {fold ? "D" : "대시보드"}
           {/* 공통 */}
         </Menu>
-        <Menu
-          selected={currentDashboardPage === "managequiz"}
-          onClick={() => {
-            dispatch(changeDashboardPage("managequiz"));
-          }}
-        >
-          {fold ? "Q" : "퀴즈 관리"}
-          {/* 강의자 */}
-        </Menu>
+        {accountInfo.mode == "teacher" && (
+          <Menu
+            selected={currentDashboardPage === "managequiz"}
+            onClick={() => {
+              dispatch(changeDashboardPage("managequiz"));
+            }}
+          >
+            {fold ? "Q" : "퀴즈 관리"}
+            {/* 강의자 */}
+          </Menu>
+        )}
         <Menu
           selected={currentDashboardPage === "managelecture"}
           onClick={() => {
@@ -117,29 +119,17 @@ export default function Aside(): JSX.Element {
           {fold ? "A" : "강의분석 기록 목록"}
           {/* 공통 */}
         </Menu>
-        <Menu
-          selected={currentDashboardPage === "test"}
-          onClick={() => {
-            dispatch(changeDashboardPage("test"));
-          }}
-        >
-          {fold ? "T" : "테스트"}
-        </Menu>
+        {accountInfo.mode === "student" && (
+          <Menu
+            selected={currentDashboardPage === "test"}
+            onClick={() => {
+              dispatch(changeDashboardPage("test"));
+            }}
+          >
+            {fold ? "T" : "테스트"}
+          </Menu>
+        )}
       </Menus>
-      {accountInfo.mode == "teacher" &&
-        (mode === "normal" ? (
-          <AnalysisButton
-            onClick={() => {
-              dispatch(toAnalysisMode());
-            }}
-          />
-        ) : (
-          <ExitAnalysisButton
-            onClick={() => {
-              dispatch(toNormalMode());
-            }}
-          />
-        ))}
       <Button
         style={{
           border: "none",

@@ -6,9 +6,12 @@ import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
 import Key from "components/atoms/svg/Key";
 import { ipcRenderer } from "electron";
+import { useLocalStorage } from "hooks/useLocalStorage";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { setAccessToken } from "repos";
+import { signIn } from "repos/account";
 import { RootState } from "rootReducer";
 import { signInAction } from "slices/accountSlice";
 import styled from "styled-components";
@@ -69,10 +72,17 @@ export default function Intro(): JSX.Element {
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
   const [invalidNumber, setInvalidNumber] = useState(0);
+  const [isPending, setIsPending] = useState(false);
   const [formInput, setFormInput] = useState({
-    email: "jongkeun.ch@gmail.com",
+    email: "jongkeun.ch_@gmail.com",
     password: "1q2w3e4r!",
   });
+
+  // refresh Token을 가져온다.
+  const [savedRefreshToken, setSavedRefreshToken] = useLocalStorage(
+    "refreshToken",
+    ""
+  );
 
   useEffect(() => {
     ipcRenderer.send("resizeWindow", {
@@ -86,10 +96,10 @@ export default function Intro(): JSX.Element {
     if (isLogin) history.replace("/dashboard");
   }, [isLogin, history]);
 
-  function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormInput({
       ...formInput,
-      [event.target.name]: event.currentTarget.value,
+      [e.target.name]: e.currentTarget.value,
     });
   }
 
@@ -101,26 +111,34 @@ export default function Intro(): JSX.Element {
 
   function handleLoginButton() {
     // NOTE 로그인 시도에 실패하였을 때 보여줌.
-    setInvalidNumber((inv) => inv + 1);
-
-    // NOTE debug 목적입니다.
-    if (confirm("학생으로 로그인하시겠습니까?")) {
-      dispatch(
-        signInAction({
-          email: formInput.email,
-          mode: "student",
-          password: formInput.password,
-        })
-      );
-    } else {
-      dispatch(
-        signInAction({
-          email: formInput.email,
-          mode: "teacher",
-          password: formInput.password,
-        })
-      );
-    }
+    if (isPending) return;
+    setIsPending(true);
+    (async function () {
+      try {
+        const rtn = await signIn(formInput);
+        const {
+          accessToken,
+          refreshToken,
+          id,
+          name,
+          email,
+          role,
+          type,
+        } = rtn.data.data;
+        console.log(
+          "%c" + accessToken + " id: " + id,
+          "background:#222; color:#bada55"
+        );
+        setAccessToken(accessToken); // axios 설정을 바꿈.
+        setSavedRefreshToken(refreshToken); // 로컬스토리지에 저장됨.
+        dispatch(signInAction({ email, id, mode: role, name, type }));
+      } catch (error) {
+        console.error("에러:", error);
+        setInvalidNumber((inv) => inv + 1);
+      } finally {
+        setIsPending(false);
+      }
+    })();
   }
 
   return (
@@ -167,15 +185,17 @@ export default function Intro(): JSX.Element {
           color="white"
           style={{
             backgroundColor: "#032D3C",
+            opacity: `${isPending ? 0.5 : 1}`,
             width: "100%",
             margin: 0,
             border: "none",
             height: "47px",
             borderRadius: 0,
           }}
+          disabled={isPending}
           onClick={handleLoginButton}
         >
-          로그인
+          {!isPending ? "로그인" : "로그인 중..."}
         </Button>
         <Button
           color="#032D3C"

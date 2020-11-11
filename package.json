@@ -20,7 +20,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./assets/excalibur.ico"
+        "icon": "./assets/icons/mac/icon.icns"
       },
       "makers": [
         {
