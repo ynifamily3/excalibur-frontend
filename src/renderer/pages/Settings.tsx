@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { Buttontest as Button } from "components/atoms/Button";
+import Loading from "components/atoms/Loading";
 import Gnb from "components/complex/Gnb";
+import SettingsStudent from "components/complex/SettingsStudent";
+import SettingsTeacher from "components/complex/SettingsTeacher";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { RootState } from "rootReducer";
-import styled from "styled-components";
-import Loading from "components/atoms/Loading";
-import { Buttontest as Button } from "components/atoms/Button";
 import { signOutAction } from "slices/accountSlice";
+import { reset } from "slices/globalStateSlice";
+import { reset as reset2 } from "slices/uiSlice";
+import styled from "styled-components";
 import theme from "styles/theme";
-import SettingsStudent from "components/complex/SettingsStudent";
-import SettingsTeacher from "components/complex/SettingsTeacher";
 
 const Wrapper = styled.div`
   display: flex;
@@ -121,7 +123,10 @@ const Settings = (): JSX.Element => {
                 color="red"
                 style={{ padding: "18px", margin: 0, marginTop: 54 }}
                 onClick={() => {
+                  if (!confirm("로그아웃 하시겠습니까?")) return;
                   history.replace("/");
+                  dispatch(reset());
+                  dispatch(reset2());
                   dispatch(signOutAction());
                 }}
               >

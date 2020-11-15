@@ -1,11 +1,13 @@
+import BackButton from "components/atoms/BackButton";
 import Button from "components/atoms/Button";
 import Novalid from "components/atoms/Novalid";
 import Select from "components/atoms/Select";
 import Caution from "components/atoms/svg/Caution";
 import SettingIcon from "components/atoms/svg/Setting";
 import React, { PropsWithChildren } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "rootReducer";
+import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
 import color from "styles/color";
 import theme from "styles/theme";
@@ -44,10 +46,22 @@ const Underline = styled.div`
 `;
 
 export default function AddNewLectureStudentContent(): JSX.Element {
+  const dispatch = useDispatch();
   return (
     <Wrapper>
-      <div style={{ fontSize: theme.size.h2, marginBottom: "44px" }}>
-        &lt; 새 강의 추가
+      <div
+        style={{
+          fontSize: theme.size.h2,
+          marginBottom: "44px",
+          display: "flex",
+        }}
+      >
+        <BackButton
+          onClick={() => {
+            dispatch(changeDashboardPage("managelecture"));
+          }}
+        />{" "}
+        새 강의 추가
       </div>
       <div style={{ width: "100%", marginLeft: 44 }}>
         새 강의를 추가하려면, 강의자가 전달한 초대 URL로 접속하세요.

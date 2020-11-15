@@ -1,12 +1,13 @@
-// import { ALabel, Checkbox, CheckboxWrapper } from "components/atoms/Checkbox";
 import { QuizBox as QuizBoxOriginal } from "components/atoms/QuizBox";
 import { Radio, RadioLabel, RadioSelect } from "components/atoms/Radio";
 import X from "components/atoms/svg/X";
 import { ModalContext } from "contexts/modalContext";
-import { ipcRenderer } from "electron";
 import p from "immer";
 import React, { FC, useCallback, useContext, useRef, useState } from "react";
 import styled from "styled-components";
+
+// import { ALabel, Checkbox, CheckboxWrapper } from "components/atoms/Checkbox";
+// import { ipcRenderer } from "electron";
 
 const Wrapper = styled.div`
   display: flex;

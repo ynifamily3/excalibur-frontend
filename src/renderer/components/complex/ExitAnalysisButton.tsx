@@ -1,13 +1,16 @@
-import React from "react";
-import color from "styles/color";
+import MinimodeButton from "components/atoms/svg/MinimodeButton";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
 import styled from "styled-components";
 import theme from "styles/theme";
-import X from "../atoms/svg/X";
-import MB from "../atoms/svg/MiniBookmark";
-import MT from "../atoms/svg/MiniTimer";
+
 import MP from "../atoms/svg/MiniPeople";
-import MinimodeButton from "components/atoms/svg/MinimodeButton";
-import { useHistory } from "react-router-dom";
+import MT from "../atoms/svg/MiniTimer";
+import X from "../atoms/svg/X";
+
+// import MB from "../atoms/svg/MiniBookmark";
 
 const Button = styled.button`
   background-color: rgb(254, 72, 80);
@@ -28,7 +31,7 @@ const Button = styled.button`
   }
 `;
 
-const StatusBar = styled.div`
+const StatusBar = styled.div<{ isFold: boolean }>`
   display: flex;
   position: relative;
   font-size: ${theme.size.h4}px;
@@ -46,48 +49,75 @@ const StatusBar = styled.div`
   font-size: ${theme.size.h5}px;
 `;
 
-const TominiButton = styled.button`
+const TominiButton = styled.button<{ isFold: boolean }>`
   cursor: pointer;
   border: none;
   background-color: inherit;
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: ${({ isFold }) => (isFold ? "40px" : "12px")};
+  right: ${({ isFold }) => (isFold ? "0" : "12px")};
 `;
 
 export default function AnalysisButton({
   onClick,
+  isFold,
 }: {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  isFold: boolean;
 }): JSX.Element {
   const history = useHistory();
+  const { analysisStat, analysisTime } = useSelector(
+    (state: RootState) => state.global
+  );
+
+  // 현재 시간을 시작으로 분석을 시작한다.
+  const [second, setSecond] = useState(
+    Math.floor(+new Date() / 1000) - analysisTime
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => setSecond((sec) => sec + 1), 1000);
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
+
   return (
     <>
-      <StatusBar>
+      <StatusBar isFold={isFold}>
         <TominiButton
+          isFold={isFold}
           onClick={() => {
             history.replace("/analysis");
           }}
         >
           <MinimodeButton color="#e4e4e4" />
         </TominiButton>
-        <div style={{ fontSize: theme.size.h4 + "px", marginBottom: "10px" }}>
-          제주 해녀의 이해
-        </div>
-        <div style={{ display: "flex" }}>
-          <span style={{ display: "flex", flex: 1 }}>
-            <MB />
-            &nbsp;99차시
-          </span>
-          <span style={{ display: "flex", flex: 1 }}>
-            <MT />
-            &nbsp;00:11:57
-          </span>
-          <span style={{ display: "flex", flex: 1 }}>
-            <MP />
-            &nbsp;999명
-          </span>
-        </div>
+        {!isFold && (
+          <>
+            <div
+              style={{ fontSize: theme.size.h4 + "px", marginBottom: "10px" }}
+            >
+              {analysisStat.name}
+            </div>
+
+            <div style={{ display: "flex" }}>
+              {/* <span style={{ display: "flex", flex: 1 }}>
+                <MB />
+                &nbsp;.
+              </span> */}
+              {/* 차시 */}
+              <span style={{ display: "flex", flex: 1 }}>
+                <MT />
+                &nbsp;{new Date(second * 1000).toISOString().substr(11, 8)}
+              </span>
+              <span style={{ display: "flex", flex: 1 }}>
+                <MP />
+                &nbsp;0명
+              </span>
+            </div>
+          </>
+        )}
       </StatusBar>
       <Button onClick={onClick}>
         <div
@@ -97,12 +127,12 @@ export default function AnalysisButton({
             alignItems: "center",
             width: "24px",
             height: "24px",
-            marginRight: "6px",
+            marginRight: isFold ? 0 : "6px",
           }}
         >
           <X />
         </div>
-        분석 종료
+        {!isFold && "분석 종료"}
       </Button>
     </>
   );

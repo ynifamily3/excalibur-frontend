@@ -1,5 +1,6 @@
 import Button from "components/atoms/Button";
 import Select from "components/atoms/Select";
+import RightArrow from "components/atoms/svg/RightArrow";
 import SettingIcon from "components/atoms/svg/Setting";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +10,10 @@ import {
   getTeacherCourses as getTeahcerCoursesAPI,
 } from "repos/course";
 import { RootState } from "rootReducer";
+import { toAnalysisMode } from "slices/globalStateSlice";
 import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
+import color from "styles/color";
 import theme from "styles/theme";
 
 const Wrapper = styled.div`
@@ -61,22 +64,39 @@ const LIChild = styled.div`
   }
 `;
 
+const AnalysisButton = styled(Button)`
+  background-color: ${color.green[1]};
+  border-radius: 5px;
+  width: 76px;
+  height: 34px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  column-gap: 4px;
+  cursor: pointer;
+`;
+
 export default function ManageLectureContent(): JSX.Element {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<APIstatus>(APIstatus.IDLE);
   const { accountInfo } = useSelector((state: RootState) => state.account);
+  const { mode } = useSelector((state: RootState) => state.global);
   const [data, setData] = useState<IResponseGetTeacherCourses>({
     message: "",
     data: [],
   });
   const getTeacherCourses = useCallback(async () => {
-    const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id });
+    // TODO 서버에 학생이 수강중인 강의 목록을 저장하고 보여주는 API가 없어서 클라이언트가 그때그때 추가하도록 하려고 여기에 추가함.
+    // 이 때 강의자는 무조건 13번임 (고정)
+    // const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id });
+    const ret = await getTeahcerCoursesAPI({ accountId: 13 });
     setStatus(APIstatus.DONE);
     setData(ret.data);
-  }, [accountInfo.id]);
+  }, []);
   // 강의 리스트를 가져온다.
   useEffect(() => {
-    if (accountInfo.mode === "teacher") {
+    // TODO 학생이 수강중인 강의 목록을 가져오거나 추가하는 API가 없어서 IF문 BYPASS
+    if (1 === 1 || accountInfo.mode === "teacher") {
       try {
         setStatus(APIstatus.PENDING);
         getTeacherCourses();
@@ -112,16 +132,12 @@ export default function ManageLectureContent(): JSX.Element {
       <Top>
         <Select>
           <option>전체 보기</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
+          <option>최근 진행 강의 보기</option>
         </Select>
         <div style={{ marginLeft: "16px" }}>
           <Select>
             <option>최신순</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
+            <option>오래된순</option>
           </Select>
         </div>
       </Top>
@@ -142,8 +158,24 @@ export default function ManageLectureContent(): JSX.Element {
             {data.data.reverse().map((x, i) => {
               return (
                 <LI key={"lect-" + i}>
-                  <LIChild>{x.name}</LIChild>
-                  <LIChild>{"미분류"}</LIChild>
+                  <LIChild>{"[" + x.code + "] " + x.name}</LIChild>
+                  {accountInfo.mode === "teacher" && mode === "normal" && (
+                    <LIChild>
+                      <AnalysisButton
+                        color="white"
+                        onClick={() => {
+                          dispatch(
+                            toAnalysisMode({
+                              analysisStat: x,
+                              analysisTime: Math.floor(+new Date() / 1000),
+                            })
+                          );
+                        }}
+                      >
+                        시작 <RightArrow />
+                      </AnalysisButton>
+                    </LIChild>
+                  )}
                   <LIChild>{new Date().toLocaleDateString()}</LIChild>
                   <LIChild>
                     <SettingIcon />
@@ -157,18 +189,3 @@ export default function ManageLectureContent(): JSX.Element {
     </Wrapper>
   );
 }
-
-// {accountInfo.mode == "teacher" &&
-//         (mode === "normal" ? (
-//           <AnalysisButton
-//             onClick={() => {
-//               dispatch(toAnalysisMode());
-//             }}
-//           />
-//         ) : (
-//           <ExitAnalysisButton
-//             onClick={() => {
-//               dispatch(toNormalMode());
-//             }}
-//           />
-//         ))}

@@ -81,14 +81,16 @@ export default function SignUp(): JSX.Element {
     ipcRenderer.send("resizeWindow", {
       width: 1280,
       height: 720,
-      animated: true,
+      animated: false,
     });
+    ipcRenderer.send("centerWindow");
     return () => {
       ipcRenderer.send("resizeWindow", {
         width: 800,
         height: 600,
-        animated: true,
+        animated: false,
       });
+      ipcRenderer.send("centerWindow");
     };
   }, []);
 
@@ -251,7 +253,7 @@ export default function SignUp(): JSX.Element {
         </div>
         <div style={{ width: "400px", margin: "0 auto" }}>
           <Button
-            disabled={!inputAllowed}
+            disabled={true || !inputAllowed}
             color="#032D3C"
             style={{
               display: "flex",

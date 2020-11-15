@@ -3,7 +3,11 @@ import { QuizBox } from "components/atoms/QuizBox";
 import X from "components/atoms/svg/X";
 // 모달 띄우기
 import { ModalContext } from "contexts/modalContext";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
+import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
 import theme from "styles/theme";
 
@@ -71,6 +75,14 @@ const data = [
 
 export default function ManageQuizTimeLineContent(): JSX.Element {
   const { handleModal } = useContext(ModalContext);
+  const { mode } = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (mode === "normal") {
+      // 분석 세션이 종료되면 내 강의로 튕기도록 함
+      dispatch(changeDashboardPage("managelecture"));
+    }
+  }, [mode, dispatch]);
   return (
     <Wrapper>
       <Button

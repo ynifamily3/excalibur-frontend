@@ -38,7 +38,6 @@ const createTeacherCourses = async ({
 }: IRequestCreateTeacherCourses): Promise<
   AxiosResponse<IResponseCreateTeacherCourses>
 > => {
-  console.log("????");
   return axios.post(`/courses`, {
     accountId,
     name,

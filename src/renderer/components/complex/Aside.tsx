@@ -90,17 +90,6 @@ export default function Aside(): JSX.Element {
           {fold ? "D" : "대시보드"}
           {/* 공통 */}
         </Menu>
-        {accountInfo.mode == "teacher" && (
-          <Menu
-            selected={currentDashboardPage === "managequiz"}
-            onClick={() => {
-              dispatch(changeDashboardPage("managequiz"));
-            }}
-          >
-            {fold ? "Q" : "퀴즈 관리"}
-            {/* 강의자 */}
-          </Menu>
-        )}
         <Menu
           selected={
             currentDashboardPage === "managelecture" ||
@@ -111,7 +100,7 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("managelecture"));
           }}
         >
-          {fold ? "L" : "내 강의 관리"}
+          {fold ? "L" : "내 강의"}
           {/* 공통 */}
         </Menu>
         <Menu
@@ -120,7 +109,7 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("listlectureanalysis"));
           }}
         >
-          {fold ? "A" : "강의분석 기록 목록"}
+          {fold ? "A" : "강의분석 기록"}
           {/* 공통 */}
         </Menu>
         {accountInfo.mode === "student" && (
@@ -131,6 +120,17 @@ export default function Aside(): JSX.Element {
             }}
           >
             {fold ? "T" : "테스트"}
+          </Menu>
+        )}
+        {accountInfo.mode == "teacher" && mode === "analysis" && (
+          <Menu
+            selected={currentDashboardPage === "managequiz"}
+            onClick={() => {
+              dispatch(changeDashboardPage("managequiz"));
+            }}
+          >
+            {fold ? "Q" : "✅퀴즈 출제✅"}
+            {/* 강의자 */}
           </Menu>
         )}
       </Menus>
@@ -154,6 +154,14 @@ export default function Aside(): JSX.Element {
       >
         <Back />
       </Button>
+      {accountInfo.mode == "teacher" && mode === "analysis" && (
+        <ExitAnalysisButton
+          isFold={fold}
+          onClick={() => {
+            dispatch(toNormalMode());
+          }}
+        />
+      )}
       <AsideStats isFold={fold} />
     </Wrapper>
   );

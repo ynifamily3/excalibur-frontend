@@ -223,6 +223,7 @@ export default function Intro(): JSX.Element {
           {!isPending ? "로그인" : "로그인 중..."}
         </Button>
         <Button
+          disabled={true}
           color="#032D3C"
           style={{
             display: "flex",
