@@ -1,9 +1,13 @@
 import Button from "components/atoms/Button";
 import Select from "components/atoms/Select";
 import SettingIcon from "components/atoms/svg/Setting";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { mockData as data } from "repos/course";
+import { APIstatus } from "repos";
+import {
+  IResponseGetTeacherCourses,
+  getTeacherCourses as getTeahcerCoursesAPI,
+} from "repos/course";
 import { RootState } from "rootReducer";
 import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
@@ -42,6 +46,9 @@ const LI = styled.li`
   font-size: ${theme.size.h5}px;
   color: gray;
   height: 60px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const LIChild = styled.div`
@@ -56,7 +63,31 @@ const LIChild = styled.div`
 
 export default function ManageLectureContent(): JSX.Element {
   const dispatch = useDispatch();
+  const [status, setStatus] = useState<APIstatus>(APIstatus.IDLE);
   const { accountInfo } = useSelector((state: RootState) => state.account);
+  const [data, setData] = useState<IResponseGetTeacherCourses>({
+    message: "",
+    data: [],
+  });
+  const getTeacherCourses = useCallback(async () => {
+    const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id });
+    setStatus(APIstatus.DONE);
+    setData(ret.data);
+  }, [accountInfo.id]);
+  // 강의 리스트를 가져온다.
+  useEffect(() => {
+    if (accountInfo.mode === "teacher") {
+      try {
+        setStatus(APIstatus.PENDING);
+        getTeacherCourses();
+      } catch (e) {
+        console.error("에러:", e);
+        setStatus(APIstatus.ERROR);
+      }
+    } else {
+      //
+    }
+  }, [accountInfo.mode, getTeacherCourses]);
   return (
     <Wrapper>
       <Top>
@@ -94,30 +125,35 @@ export default function ManageLectureContent(): JSX.Element {
           </Select>
         </div>
       </Top>
-      <div
-        style={{
-          marginBottom: "10px",
-          marginTop: "30px",
-          color: "black",
-          fontSize: theme.size.h5 + "px",
-        }}
-      >
-        총 {data.length}개의 강의가 있습니다.
-      </div>
-      <UL>
-        {data.map((x, i) => {
-          return (
-            <LI key={"lect-" + i}>
-              <LIChild>{x.title}</LIChild>
-              <LIChild>{x.kind}</LIChild>
-              <LIChild>{x.createdAt}</LIChild>
-              <LIChild>
-                <SettingIcon />
-              </LIChild>
-            </LI>
-          );
-        })}
-      </UL>
+      {status === APIstatus.PENDING && <div>로딩 중...</div>}
+      {status === APIstatus.DONE && (
+        <>
+          <div
+            style={{
+              marginBottom: "10px",
+              marginTop: "30px",
+              color: "black",
+              fontSize: theme.size.h5 + "px",
+            }}
+          >
+            총 {data.data.length}개의 강의가 있습니다.
+          </div>
+          <UL>
+            {data.data.reverse().map((x, i) => {
+              return (
+                <LI key={"lect-" + i}>
+                  <LIChild>{x.name}</LIChild>
+                  <LIChild>{"미분류"}</LIChild>
+                  <LIChild>{new Date().toLocaleDateString()}</LIChild>
+                  <LIChild>
+                    <SettingIcon />
+                  </LIChild>
+                </LI>
+              );
+            })}
+          </UL>
+        </>
+      )}
     </Wrapper>
   );
 }

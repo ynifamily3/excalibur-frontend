@@ -18,7 +18,8 @@ const globalStateSlice = createSlice({
   reducers: {
     toAnalysisMode(state, action: PayloadAction<{ code: string }>) {
       state.mode = "analysis";
-      state.code = action.payload.code;
+      // DEBUG 수정예정
+      // state.code = action.payload.code;
     },
     toNormalMode(state) {
       state.mode = "normal";

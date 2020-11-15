@@ -19,4 +19,10 @@ const applyAxiosSettings = (): void => {
   Axios.defaults.headers = defaultHeaders;
 };
 
-export { defaultHeaders, applyAxiosSettings, setAccessToken };
+enum APIstatus {
+  IDLE,
+  PENDING,
+  DONE,
+  ERROR,
+}
+export { defaultHeaders, applyAxiosSettings, setAccessToken, APIstatus };

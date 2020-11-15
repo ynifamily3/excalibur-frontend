@@ -102,7 +102,11 @@ export default function Aside(): JSX.Element {
           </Menu>
         )}
         <Menu
-          selected={currentDashboardPage === "managelecture"}
+          selected={
+            currentDashboardPage === "managelecture" ||
+            currentDashboardPage === "addnewlecture" ||
+            currentDashboardPage === "addnewlecturestudent"
+          }
           onClick={() => {
             dispatch(changeDashboardPage("managelecture"));
           }}

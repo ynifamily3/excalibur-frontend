@@ -5,9 +5,11 @@ import Email from "components/atoms/svg/Email";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
 import Key from "components/atoms/svg/Key";
+import QuizModal from "components/complex/QuizModal";
+import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { setAccessToken } from "repos";
@@ -71,6 +73,7 @@ export default function Intro(): JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
+  const { handleModal } = useContext(ModalContext);
   const [invalidNumber, setInvalidNumber] = useState(0);
   const [isPending, setIsPending] = useState(false);
   const [formInput, setFormInput] = useState({
@@ -143,9 +146,31 @@ export default function Intro(): JSX.Element {
 
   return (
     <Wrapper>
-      <div style={{ marginLeft: "-50px" }}>
+      <div>
         <ExcaliburLogo />
       </div>
+      {/* <div>
+        <Button
+          onClick={() => {
+            handleModal(
+              <QuizModal
+                isAnswer={[false, true, false]}
+                description={"1형식은 주어와 _______ 로 구분되어 있다."}
+                timeLimit={10 * 1000}
+                selections={["1. 형용사", "2. 동사", "3. 관사"]}
+              />
+            );
+          }}
+          color="red"
+          style={{
+            width: "auto",
+            paddingTop: "1em",
+            paddingBottom: "1em",
+          }}
+        >
+          ⚡ 퀴즈 팝업 보기 ⚡ listen
+        </Button>
+      </div> */}
       <LoginForm>
         <LoginInputWrapper>
           <div style={{ position: "absolute", left: 10, top: 10 }}>

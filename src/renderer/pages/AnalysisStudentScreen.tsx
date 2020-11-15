@@ -112,7 +112,7 @@ const AnalysisStudentScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Title>물리 1차시 - 최미엘 교수님</Title>
+      <Title>물리 1차시 - 김지수 교수님</Title>
       <CameraBoxWrapper>
         <CameraBox
           ref={cameraBox}
@@ -142,6 +142,8 @@ const AnalysisStudentScreen: FC = () => {
           )}
         </CameraBox>
       </CameraBoxWrapper>
+      <div> - </div>
+      <div>집중도: 100% / 이해도: 10/11</div>
       <Bottom>
         <Button2
           onClick={() => {

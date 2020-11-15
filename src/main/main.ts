@@ -165,6 +165,7 @@ const contextMenu = Menu.buildFromTemplate([
 ]);
 
 const createWindow = (): void => {
+  if (process.platform === "darwin") app.dock.hide();
   mainWindow = new BrowserWindow({
     frame: false,
     autoHideMenuBar: true,
