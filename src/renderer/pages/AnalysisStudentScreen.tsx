@@ -5,8 +5,9 @@ import Caution from "components/atoms/svg/Caution";
 import { ipcRenderer } from "electron";
 import { useCameraStream } from "hooks/useCamera";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { IIsActive, isActive } from "repos/course";
 import { uploadStudentVideo } from "repos/file";
 import { addDrowsnesses } from "repos/session";
 import { RootState } from "rootReducer";
@@ -79,19 +80,8 @@ const AnalysisStudentScreen: FC = () => {
 
   // 분석 모드로 전환하고 창 크기를 조정합니다.
   useEffect(() => {
-    // 분석 모드로 전환합니다.
-    dispatch(
-      toAnalysisMode({
-        analysisStat: {
-          name: "멍멍이와 야옹이",
-          accountId: 13,
-          code: "954658",
-          sessionId: 34,
-          courseId: 22,
-        },
-        analysisTime: Math.floor(+new Date() / 1000),
-      })
-    ); // Aside, title 보이는지의 여부 결정
+    // 분석 모드로 전환합니다. (이전 창에서 호출하도록 변경함. 코드옮김.)
+
     ipcRenderer.send("resizeWindow", {
       width: 300,
       height: 500,
@@ -131,6 +121,75 @@ const AnalysisStudentScreen: FC = () => {
     }
   }, [streamStatus, stream, showVideo]);
 
+  const startRecording = useCallback(
+    (stream: MediaStream) => {
+      const recorder = new MediaRecorder(stream, {
+        mimeType: "video/webm;codecs=h264",
+      });
+
+      recorder.ondataavailable = handleDataAvailable;
+      recorder.start();
+      function handleDataAvailable(event: BlobEvent) {
+        if (event.data.size > 0) {
+          // event.data가 블롭입니다.
+          videoData.current.push(event.data);
+          const video = document.createElement("video");
+          video.controls = true;
+          video.src = URL.createObjectURL(videoData.current[0]);
+          // const blob = new Blob(videoData.current);
+          (async () => {
+            // USAGE EXAMPLE :
+            // console.log("전:", video.duration);
+            await calculateMediaDuration(video); // 크롬 자체 버그 회피 (duration을 못 읽어오는 문제 해결)
+            // console.log("후: ", video.duration);
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const ysFixWebmDuration = require("../utils/fix-webm-duration");
+            // console.log(video.duration*1000);
+            ysFixWebmDuration(
+              videoData.current[0],
+              video.duration * 1000,
+              (fixedBlob: Blob) => {
+                console.log("!!", fixedBlob);
+                // saveBlob(URL.createObjectURL(fixedBlob), "test.mkv");
+                const fileOfBlob = new File(
+                  [fixedBlob],
+                  `soogang${makeId(16)}.mkv`
+                );
+                uploadStudentVideo(fileOfBlob).then((response) => {
+                  const { data } = response;
+                  // console.log(data, "끝!");
+                  // TODO 졸음구간 추가 요청을 서버로 보낸다.
+                  data.forEach((value) => {
+                    const { end, start } = value;
+                    // 서버에 졸음 정보를 보낸다.
+                    addDrowsnesses({
+                      endSecond: end + timeSpace.current,
+                      startSecond: start + timeSpace.current,
+                      accountId: analysisStat.accountId,
+                      analysisSessionId: analysisStat.sessionId,
+                    });
+                  });
+                });
+              }
+            );
+          })();
+        }
+      }
+      return recorder;
+    },
+    [analysisStat.sessionId, analysisStat.accountId]
+  );
+
+  function stopRecording(mediaRecorder: MediaRecorder) {
+    // halt!
+    try {
+      mediaRecorder.stop();
+    } catch (e) {
+      console.log("정리에러:", e);
+    }
+    videoData.current = [];
+  }
+
   // 10초짜리 동영상을 캡처해서 서버에 주기적으로 보냅니다
   useEffect(() => {
     if (streamStatus !== "done" || !stream) {
@@ -147,79 +206,42 @@ const AnalysisStudentScreen: FC = () => {
       clearInterval(intervalID);
       stopRecording(recorder);
     };
-  }, [streamStatus, stream]);
+  }, [streamStatus, stream, startRecording]);
 
-  // form.append("blob", blob, filename);
-
-  function startRecording(stream: MediaStream) {
-    const recorder = new MediaRecorder(stream, {
-      mimeType: "video/webm;codecs=h264",
-    });
-
-    recorder.ondataavailable = handleDataAvailable;
-    recorder.start();
-    function handleDataAvailable(event: BlobEvent) {
-      if (event.data.size > 0) {
-        // event.data가 블롭입니다.
-        videoData.current.push(event.data);
-        const video = document.createElement("video");
-        video.controls = true;
-        video.src = URL.createObjectURL(videoData.current[0]);
-        // const blob = new Blob(videoData.current);
-        (async () => {
-          // USAGE EXAMPLE :
-          // console.log("전:", video.duration);
-          await calculateMediaDuration(video); // 크롬 자체 버그 회피 (duration을 못 읽어오는 문제 해결)
-          // console.log("후: ", video.duration);
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          const ysFixWebmDuration = require("../utils/fix-webm-duration");
-          // console.log(video.duration*1000);
-          ysFixWebmDuration(
-            videoData.current[0],
-            video.duration * 1000,
-            (fixedBlob: Blob) => {
-              console.log("!!", fixedBlob);
-              // saveBlob(URL.createObjectURL(fixedBlob), "test.mkv");
-              const fileOfBlob = new File(
-                [fixedBlob],
-                `soogang${makeId(16)}.mkv`
-              );
-              uploadStudentVideo(fileOfBlob).then((response) => {
-                const { data } = response;
-                console.log(data, "끝!");
-                // TODO 졸음구간 추가 요청을 서버로 보낸다.
-                data.forEach((value) => {
-                  const { end, start } = value;
-                  // 서버에 졸음 정보를 보낸다.
-                  addDrowsnesses({
-                    endSecond: end + timeSpace.current,
-                    startSecond: start + timeSpace.current,
-                    accountId: analysisStat.accountId,
-                    analysisSessionId: analysisStat.sessionId,
-                  });
-                });
-              });
-            }
-          );
-        })();
-      }
+  // 서버와의 지속적인 통신으로 계속 active상태인지 감시합니다.
+  const getActives = useCallback(async () => {
+    const ret = await isActive();
+    // console.log(ret.data.data);
+    const activatedList = ret.data.data;
+    for (let i = 0; i < activatedList.length; i++) {
+      if (activatedList[i].id === analysisStat.sessionId) return;
     }
-    return recorder;
-  }
+    // 여기까지 온 거면 액티브된것이 없으므로 분석을 종료시킨다.
+    dispatch(changeDashboardPage("listlectureanalysis"));
+    alert("강의자에 의해 종료되었습니다.");
+  }, [analysisStat.sessionId, dispatch]);
 
-  function stopRecording(mediaRecorder: MediaRecorder) {
-    // halt!
-    try {
-      mediaRecorder.stop();
-    } catch (e) {
-      console.log("정리에러:", e);
-    }
-    videoData.current = [];
-  }
+  useEffect(() => {
+    getActives();
+    const tickId = setInterval(() => {
+      getActives();
+    }, 1000);
+    return () => {
+      clearInterval(tickId);
+    };
+  }, [getActives]);
+
+  // TODO 퀴즈도 있는지 감시합니다.
+  //
+  // TODO 이상한 프로세스를 감시합니다.
+  // (async function () {
+  //   const proc = JSON.parse(await ipcRenderer.invoke("getProcessList"));
+  //   console.log(proc);
+  // })();
 
   return (
     <Wrapper>
-      <Title>물리 1차시 - 김지수 교수님</Title>
+      <Title>{analysisStat.name}</Title>
       <CameraBoxWrapper>
         <CameraBox
           ref={cameraBox}

@@ -132,7 +132,7 @@ export default function Aside(): JSX.Element {
           {fold ? "A" : "강의분석 기록"}
           {/* 공통 */}
         </Menu>
-        {accountInfo.mode === "student" && (
+        {/* {accountInfo.mode === "student" && (
           <Menu
             selected={currentDashboardPage === "test"}
             onClick={() => {
@@ -141,7 +141,7 @@ export default function Aside(): JSX.Element {
           >
             {fold ? "T" : "분석테스트"}
           </Menu>
-        )}
+        )} */}
         {accountInfo.mode == "teacher" && mode === "analysis" && (
           <Menu
             selected={currentDashboardPage === "managequiz"}

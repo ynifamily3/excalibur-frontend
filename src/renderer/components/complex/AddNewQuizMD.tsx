@@ -4,10 +4,10 @@ import X from "components/atoms/svg/X";
 import { ModalContext } from "contexts/modalContext";
 import p from "immer";
 import React, { FC, useCallback, useContext, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { createQuiz } from "repos/quiz";
+import { RootState } from "rootReducer";
 import styled from "styled-components";
-
-// import { ALabel, Checkbox, CheckboxWrapper } from "components/atoms/Checkbox";
-// import { ipcRenderer } from "electron";
 
 const Wrapper = styled.div`
   display: flex;
@@ -15,12 +15,10 @@ const Wrapper = styled.div`
   overflow: scroll;
   position: relative;
 `;
-
 const ScrollWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
 const QuizBox = styled(QuizBoxOriginal)`
   margin: 16px 0;
   height: 70px;
@@ -46,7 +44,6 @@ export const SelectionWrapper = styled.div`
   flex-direction: column;
   width: 100%;
 `;
-
 const Selection = styled.div`
   border: inherit;
   border-radius: inherit;
@@ -55,7 +52,6 @@ const Selection = styled.div`
   display: flex;
   align-items: center;
 `;
-
 const Textarea = styled.textarea`
   resize: none;
   width: 100%;
@@ -66,7 +62,6 @@ const Textarea = styled.textarea`
   background-color: white;
   transition: height 1s;
 `;
-
 export type ISelectionMockFC = {
   mock: boolean;
 };
@@ -78,11 +73,15 @@ export type ISelectionFC = {
   toggleFn: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const AddNewQuizMD: FC = () => {
+const AddNewQuizMD: FC<{
+  fireFn: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ fireFn }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>();
   const QuizBoxRef = useRef<HTMLDivElement>();
   const { handleModal } = useContext(ModalContext);
+  const { analysisStat } = useSelector((state: RootState) => state.global);
   const [contentState, setContentState] = useState("");
+  const [isPending, setIsPending] = useState(false); // 퀴즈 등록 pending
   const [selState, setSelState] = useState<{
     text: string[];
     answer: number;
@@ -108,6 +107,29 @@ const AddNewQuizMD: FC = () => {
       contentState.trim().length > 0
     );
   }, [contentState, selState.answer, selState.text])();
+
+  const createQuizAPI = useCallback(async () => {
+    try {
+      setIsPending(true);
+      await createQuiz({
+        sessionId: analysisStat.sessionId,
+        content: contentState,
+        example1: selState.text[0],
+        example2: selState.text[1],
+        example3: selState.text[2],
+        answer: selState.answer + 1,
+      });
+      fireFn(true);
+      handleModal();
+    } catch (e) {
+      console.log("에러", e);
+    } finally {
+      setIsPending(false);
+    }
+  }, [analysisStat.sessionId, contentState, selState, handleModal, fireFn]);
+  const handleRegiester = () => {
+    createQuizAPI();
+  };
 
   const selections = selState.text.map((text, i) => {
     return (
@@ -185,7 +207,8 @@ const AddNewQuizMD: FC = () => {
             borderRadius: "6px",
             opacity: !isValid ? "0.5" : "1",
           }}
-          disabled={!isValid}
+          onClick={handleRegiester}
+          disabled={!isValid || isPending}
         >
           + 퀴즈 등록
         </Button>
@@ -212,18 +235,6 @@ const AddNewQuizMD: FC = () => {
               {selections}
             </SelectionWrapper>
           </QuizBox>
-
-          {/* <Button
-        style={{ backgroundColor: "skyblue", padding: 30 }}
-        onClick={() => {
-          (async function () {
-            const proc = JSON.parse(await ipcRenderer.invoke("getProcessList"));
-            console.log(proc);
-          })();
-        }}
-      >
-        Process 가져오기
-      </Button> */}
         </ScrollWrapper>
       </div>
     </Wrapper>

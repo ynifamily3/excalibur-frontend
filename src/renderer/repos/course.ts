@@ -1,6 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-// TODO 강의 조회, 생성, 구현하기
-// const course = async () => {};
 
 interface IRequestGetTeacherCourses {
   accountId: number;
@@ -60,17 +58,28 @@ interface IRequestRegisterStudentCourse {
   accountId: number;
   code: string;
 }
-interface IResponseRegisterStudentCourse {}
 
 const registerStudentCourse = async ({
   accountId,
   code,
-}: IRequestRegisterStudentCourse): Promise<
-  AxiosResponse<IResponseRegisterStudentCourse>
-> => {
+}: IRequestRegisterStudentCourse): Promise<AxiosResponse> => {
   return axios.post(`/accounts/${accountId}/student/courses`, {
     code,
   });
+};
+interface IIsActive {
+  id: number;
+  courseId: number;
+  times: number;
+  status: string;
+}
+interface IResponseIsActive {
+  message: string;
+  data: IIsActive[];
+}
+
+const isActive = async (): Promise<AxiosResponse<IResponseIsActive>> => {
+  return axios.get(`/courses/active`);
 };
 
 export {
@@ -85,5 +94,7 @@ export {
   IResponseGetStudentCourses,
   registerStudentCourse,
   IRequestRegisterStudentCourse,
-  IResponseRegisterStudentCourse,
+  isActive,
+  IResponseIsActive,
+  IIsActive,
 };

@@ -3,13 +3,15 @@ import { LoadingAnim } from "components/atoms/LoadingAnim";
 import Select from "components/atoms/Select";
 import RightArrow from "components/atoms/svg/RightArrow";
 import SettingIcon from "components/atoms/svg/Setting";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { APIstatus } from "repos";
 import {
+  IIsActive,
   IResponseGetTeacherCourses,
   getStudentCourses as getStudentCoursesAPI,
   getTeacherCourses as getTeahcerCoursesAPI,
+  isActive,
 } from "repos/course";
 import { createSession } from "repos/session";
 import { RootState } from "rootReducer";
@@ -111,7 +113,7 @@ const ButtonWrapper = ({
             setClickable(false); // 모두의 클릭을 방지
             (async function () {
               const ret = await createSession({ courseId });
-              console.log(courseId, "결과(세션 번호):", ret.data.data.id);
+              // console.log(courseId, "결과(세션 번호):", ret.data.data.id);
               setClickable(true);
               setMine(false);
               dispatch(
@@ -159,16 +161,27 @@ export default function ManageLectureContent(): JSX.Element {
     message: "",
     data: [],
   });
+  ///// 학생 전용
+  const [studentActivePending, setStudentActivePending] = useState(true);
+  const [activated, setActivated] = useState<IIsActive[]>([]); // 강의의 액티베이트 여부를 나타냅니다.
+  const isActiveCourse = (courseId: number): number => {
+    for (let i = 0; i < activated.length; i++) {
+      if (activated[i].courseId === courseId) return i;
+    }
+    return -1;
+  };
 
-  const getTeacherCourses = useCallback(async () => {
+  // const memoIsActiveCourse = useMemo(()=> isActiveCourse(courseId), []);
+
+  const getCourses = useCallback(async () => {
     if (accountInfo.mode == "teacher") {
       const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id }); // 13
-      console.log(ret.data.data);
+      // console.log(ret.data.data);
       setStatus(APIstatus.DONE);
       setData(ret.data);
     } else {
       const ret = await getStudentCoursesAPI({ accountId: accountInfo.id });
-      console.log(ret.data.data);
+      // console.log(ret.data.data);
       setStatus(APIstatus.DONE);
       setData(ret.data);
     }
@@ -177,12 +190,63 @@ export default function ManageLectureContent(): JSX.Element {
   useEffect(() => {
     try {
       setStatus(APIstatus.PENDING);
-      getTeacherCourses();
+      getCourses();
     } catch (e) {
       console.error("에러:", e);
       setStatus(APIstatus.ERROR);
     }
-  }, [accountInfo.mode, getTeacherCourses]);
+  }, [accountInfo.mode, getCourses]);
+
+  const getActives = useCallback(async () => {
+    const ret = await isActive();
+    setStudentActivePending(false);
+    // console.log(ret.data.data);
+    setActivated(ret.data.data);
+  }, []);
+
+  // 학생인 경우 주기적으로 서버 돌면서 액티브 여부임을 확인해 옵니다.
+  useEffect(() => {
+    if (accountInfo.mode === "teacher") return;
+    if (!data || !data?.data || data.data.length === 0) return;
+    getActives();
+    const tickId = setInterval(() => {
+      getActives();
+    }, 1000);
+    // 주기적
+    // TODO ENTRYPOINT
+    return () => {
+      clearInterval(tickId);
+    };
+  }, [data, getActives, accountInfo]);
+
+  const handleGoAnalysisButton = ({
+    name,
+    courseId,
+    code,
+    sessionId,
+  }: {
+    name: string;
+    courseId: number;
+    code: string;
+    sessionId: number;
+  }) => {
+    return () => {
+      dispatch(
+        toAnalysisMode({
+          analysisStat: {
+            name: name,
+            accountId: accountInfo.id,
+            code: code,
+            sessionId: sessionId,
+            courseId: courseId,
+          },
+          analysisTime: Math.floor(+new Date() / 1000),
+        })
+      );
+      dispatch(changeDashboardPage("test"));
+    };
+  };
+
   return (
     <Wrapper>
       <Top>
@@ -234,6 +298,10 @@ export default function ManageLectureContent(): JSX.Element {
               .slice()
               .reverse()
               .map((x, i) => {
+                let memoedIndex = -1;
+                if (accountInfo.mode === "student" && mode === "normal") {
+                  memoedIndex = isActiveCourse(x.accountId);
+                }
                 return (
                   <LI key={"lect-" + i}>
                     <LIChild>
@@ -252,6 +320,24 @@ export default function ManageLectureContent(): JSX.Element {
                         />
                       </LIChild>
                     )}
+                    {accountInfo.mode === "student" &&
+                      mode === "normal" &&
+                      memoedIndex >= 0 && (
+                        <LIChild>
+                          <AnalysisButton
+                            color="white"
+                            disabled={studentActivePending}
+                            onClick={handleGoAnalysisButton({
+                              name: x.name,
+                              courseId: x.accountId,
+                              code: x.code,
+                              sessionId: activated[memoedIndex].id,
+                            })}
+                          >
+                            입장
+                          </AnalysisButton>
+                        </LIChild>
+                      )}
                     <LIChild>{new Date().toLocaleDateString()}</LIChild>
                     <LIChild>
                       <SettingIcon />
