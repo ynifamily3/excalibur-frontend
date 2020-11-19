@@ -6,6 +6,8 @@ interface IRequestGetTeacherCourses {
   accountId: number;
 }
 
+type IRequestGetStudentCourses = IRequestGetTeacherCourses;
+
 interface IResponseGetTeacherCourses {
   message: string;
   data: {
@@ -14,6 +16,8 @@ interface IResponseGetTeacherCourses {
     code: string;
   }[];
 }
+
+type IResponseGetStudentCourses = IResponseGetTeacherCourses;
 
 interface IRequestCreateTeacherCourses extends IRequestGetTeacherCourses {
   name: string;
@@ -32,6 +36,14 @@ const getTeacherCourses = async ({
   return axios.get(`/accounts/${accountId}/teacher/courses`);
 };
 
+const getStudentCourses = async ({
+  accountId,
+}: IRequestGetStudentCourses): Promise<
+  AxiosResponse<IResponseGetStudentCourses>
+> => {
+  return axios.get(`/accounts/${accountId}/student/courses`);
+};
+
 const createTeacherCourses = async ({
   accountId,
   name,
@@ -44,6 +56,23 @@ const createTeacherCourses = async ({
   });
 };
 
+interface IRequestRegisterStudentCourse {
+  accountId: number;
+  code: string;
+}
+interface IResponseRegisterStudentCourse {}
+
+const registerStudentCourse = async ({
+  accountId,
+  code,
+}: IRequestRegisterStudentCourse): Promise<
+  AxiosResponse<IResponseRegisterStudentCourse>
+> => {
+  return axios.post(`/accounts/${accountId}/student/courses`, {
+    code,
+  });
+};
+
 export {
   getTeacherCourses,
   createTeacherCourses,
@@ -51,4 +80,10 @@ export {
   IResponseGetTeacherCourses,
   IRequestCreateTeacherCourses,
   IResponseCreateTeacherCourses,
+  getStudentCourses,
+  IRequestGetStudentCourses,
+  IResponseGetStudentCourses,
+  registerStudentCourse,
+  IRequestRegisterStudentCourse,
+  IResponseRegisterStudentCourse,
 };

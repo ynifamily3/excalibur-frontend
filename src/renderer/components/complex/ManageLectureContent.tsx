@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { APIstatus } from "repos";
 import {
   IResponseGetTeacherCourses,
+  getStudentCourses as getStudentCoursesAPI,
   getTeacherCourses as getTeahcerCoursesAPI,
 } from "repos/course";
 import { createSession } from "repos/session";
@@ -166,32 +167,10 @@ export default function ManageLectureContent(): JSX.Element {
       setStatus(APIstatus.DONE);
       setData(ret.data);
     } else {
-      // 학생 (데이터 모킹)
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve();
-        }, 500)
-      );
+      const ret = await getStudentCoursesAPI({ accountId: accountInfo.id });
+      console.log(ret.data.data);
       setStatus(APIstatus.DONE);
-      // 어카운트 아이디는 아마 과목 넘버일 것이다..
-      setData({
-        message: "강의 목록을 성공적으로 불러왔습니다.",
-        data: [
-          { name: "멍멍이와 야옹이", accountId: 1, code: "381901" },
-          { name: "멍멍이와 야옹이", accountId: 2, code: "778964" },
-          { name: "멍멍이와 야옹이", accountId: 3, code: "666659" },
-          { name: "법과 사회", accountId: 4, code: "684924" },
-          { name: "주먹과 법", accountId: 14, code: "469929" },
-          { name: "법보다 주먹이 가깝다", accountId: 15, code: "500210" },
-          { name: "안녕!", accountId: 16, code: "671590" },
-          { name: "마지막 잎새", accountId: 17, code: "250266" },
-          { name: "추가됨", accountId: 18, code: "066447" },
-          { name: "법과 불주먹", accountId: 19, code: "956276" },
-          { name: "멍멍이와 야옹이", accountId: 20, code: "061501" },
-          { name: "멍멍이와 야옹이", accountId: 21, code: "916546" },
-          { name: "멍멍이와 야옹이", accountId: 22, code: "954658" },
-        ],
-      });
+      setData(ret.data);
     }
   }, [accountInfo]);
   // 강의 리스트를 가져온다.
