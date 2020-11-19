@@ -6,10 +6,14 @@ import { ipcRenderer } from "electron";
 import { useCameraStream } from "hooks/useCamera";
 import { useLocalStorage } from "hooks/useLocalStorage";
 import React, { FC, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { uploadStudentVideo } from "repos/file";
+import { addDrowsnesses } from "repos/session";
+import { RootState } from "rootReducer";
 import { toAnalysisMode, toNormalMode } from "slices/globalStateSlice";
 import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
+import { calculateMediaDuration, makeId, saveBlob } from "utils";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -58,8 +62,14 @@ const Button2 = styled(Button)`
 const AnalysisStudentScreen: FC = () => {
   const dispatch = useDispatch();
   const video = useRef<HTMLVideoElement>();
+  const timeSpace = useRef<number>(+new Date()); // 측정 실행 시간
   const cameraBox = useRef<HTMLDivElement>();
   const [showVideo, setShowVideo] = useState(true);
+  const videoData = useRef<Blob[]>([]);
+  const { accountInfo } = useSelector((state: RootState) => state.account);
+  const { mode, analysisStat } = useSelector(
+    (state: RootState) => state.global
+  );
 
   // 로컬 스토리지에 저장 된 카메라들 목록입니다.
   const [currentCamera] = useLocalStorage("current_camera_device", "default");
@@ -69,7 +79,19 @@ const AnalysisStudentScreen: FC = () => {
 
   // 분석 모드로 전환하고 창 크기를 조정합니다.
   useEffect(() => {
-    dispatch(toAnalysisMode()); // Aside, title 보이는지의 여부 결정
+    // 분석 모드로 전환합니다.
+    dispatch(
+      toAnalysisMode({
+        analysisStat: {
+          name: "멍멍이와 야옹이",
+          accountId: 13,
+          code: "954658",
+          sessionId: 34,
+          courseId: 22,
+        },
+        analysisTime: Math.floor(+new Date() / 1000),
+      })
+    ); // Aside, title 보이는지의 여부 결정
     ipcRenderer.send("resizeWindow", {
       width: 300,
       height: 500,
@@ -77,7 +99,6 @@ const AnalysisStudentScreen: FC = () => {
     });
     ipcRenderer.send("positionWindow", { w: 300, h: 500 });
     return () => {
-      // NOTE 디버깅 시 밑 잠깐 주석 처리
       dispatch(toNormalMode());
       ipcRenderer.send("resizeWindow", {
         width: 800,
@@ -105,10 +126,96 @@ const AnalysisStudentScreen: FC = () => {
       cameraBox.current.style.height = "250px";
     }
     if (streamStatus === "done" && showVideo) {
-      console.log("스트림", stream);
+      // console.log("스트림", stream);
       video.current.srcObject = stream;
     }
   }, [streamStatus, stream, showVideo]);
+
+  // 10초짜리 동영상을 캡처해서 서버에 주기적으로 보냅니다
+  useEffect(() => {
+    if (streamStatus !== "done" || !stream) {
+      return;
+    }
+    timeSpace.current = +new Date();
+    let recorder = startRecording(stream);
+    const intervalID = setInterval(() => {
+      timeSpace.current = +new Date();
+      stopRecording(recorder);
+      recorder = startRecording(stream);
+    }, 10 * 1000);
+    return () => {
+      clearInterval(intervalID);
+      stopRecording(recorder);
+    };
+  }, [streamStatus, stream]);
+
+  // form.append("blob", blob, filename);
+
+  function startRecording(stream: MediaStream) {
+    const recorder = new MediaRecorder(stream, {
+      mimeType: "video/webm;codecs=h264",
+    });
+
+    recorder.ondataavailable = handleDataAvailable;
+    recorder.start();
+    function handleDataAvailable(event: BlobEvent) {
+      if (event.data.size > 0) {
+        // event.data가 블롭입니다.
+        videoData.current.push(event.data);
+        const video = document.createElement("video");
+        video.controls = true;
+        video.src = URL.createObjectURL(videoData.current[0]);
+        // const blob = new Blob(videoData.current);
+        (async () => {
+          // USAGE EXAMPLE :
+          // console.log("전:", video.duration);
+          await calculateMediaDuration(video); // 크롬 자체 버그 회피 (duration을 못 읽어오는 문제 해결)
+          // console.log("후: ", video.duration);
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const ysFixWebmDuration = require("../utils/fix-webm-duration");
+          // console.log(video.duration*1000);
+          ysFixWebmDuration(
+            videoData.current[0],
+            video.duration * 1000,
+            (fixedBlob: Blob) => {
+              console.log("!!", fixedBlob);
+              // saveBlob(URL.createObjectURL(fixedBlob), "test.mkv");
+              const fileOfBlob = new File(
+                [fixedBlob],
+                `soogang${makeId(16)}.mkv`
+              );
+              uploadStudentVideo(fileOfBlob).then((response) => {
+                const { data } = response;
+                console.log(data, "끝!");
+                // TODO 졸음구간 추가 요청을 서버로 보낸다.
+                data.forEach((value) => {
+                  const { end, start } = value;
+                  // 서버에 졸음 정보를 보낸다.
+                  addDrowsnesses({
+                    endSecond: end + timeSpace.current,
+                    startSecond: start + timeSpace.current,
+                    accountId: analysisStat.accountId,
+                    analysisSessionId: analysisStat.sessionId,
+                  });
+                });
+              });
+            }
+          );
+        })();
+      }
+    }
+    return recorder;
+  }
+
+  function stopRecording(mediaRecorder: MediaRecorder) {
+    // halt!
+    try {
+      mediaRecorder.stop();
+    } catch (e) {
+      console.log("정리에러:", e);
+    }
+    videoData.current = [];
+  }
 
   return (
     <Wrapper>
@@ -118,9 +225,8 @@ const AnalysisStudentScreen: FC = () => {
           ref={cameraBox}
           style={{ width: "250px", height: "250px", transition: "height 0.5s" }}
         >
-          {streamStatus === "idle" && <>...</>}
           {streamStatus === "loading" && <>불러오는 중...</>}
-          {streamStatus === "error" && (
+          {(streamStatus === "error" || streamStatus === "idle") && (
             <Novalid2>
               <Caution color={"rgb(245, 87, 93)"} width="45" height="45" />
               <div>카메라가 설정이 되지 않았어요! </div>

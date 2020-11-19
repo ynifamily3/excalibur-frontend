@@ -6,7 +6,7 @@ import { RootState } from "rootReducer";
 import styled from "styled-components";
 import theme from "styles/theme";
 
-import MP from "../atoms/svg/MiniPeople";
+import MP from "../atoms/svg/MiniSession";
 import MT from "../atoms/svg/MiniTimer";
 import X from "../atoms/svg/X";
 
@@ -113,7 +113,7 @@ export default function AnalysisButton({
               </span>
               <span style={{ display: "flex", flex: 1 }}>
                 <MP />
-                &nbsp;0명
+                &nbsp;{analysisStat.courseId} / {analysisStat.sessionId}
               </span>
             </div>
           </>

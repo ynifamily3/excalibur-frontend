@@ -1,4 +1,5 @@
 import Button from "components/atoms/Button";
+import { LoadingAnim } from "components/atoms/LoadingAnim";
 import Select from "components/atoms/Select";
 import RightArrow from "components/atoms/svg/RightArrow";
 import SettingIcon from "components/atoms/svg/Setting";
@@ -9,6 +10,7 @@ import {
   IResponseGetTeacherCourses,
   getTeacherCourses as getTeahcerCoursesAPI,
 } from "repos/course";
+import { createSession } from "repos/session";
 import { RootState } from "rootReducer";
 import { toAnalysisMode } from "slices/globalStateSlice";
 import { changeDashboardPage } from "slices/uiSlice";
@@ -76,36 +78,130 @@ const AnalysisButton = styled(Button)`
   cursor: pointer;
 `;
 
+const ButtonWrapper = ({
+  status,
+  clickable,
+  setClickable,
+  courseId,
+  allInfo,
+}: {
+  status: APIstatus;
+  clickable: boolean;
+  setClickable: React.Dispatch<React.SetStateAction<boolean>>;
+  courseId: number;
+  allInfo: {
+    name: string;
+    accountId: number;
+    code: string;
+  };
+}) => {
+  // 버튼에서 쓰이는 status는 IDLE, DONE또는 PENDING만 쓸 것이다..
+  const dispatch = useDispatch();
+  const [mine, setMine] = useState<boolean>(false);
+
+  return (
+    <>
+      {clickable && (
+        <AnalysisButton
+          color="white"
+          onClick={() => {
+            // APICALL
+            setMine(true);
+            setClickable(false); // 모두의 클릭을 방지
+            (async function () {
+              const ret = await createSession({ courseId });
+              console.log(courseId, "결과(세션 번호):", ret.data.data.id);
+              setClickable(true);
+              setMine(false);
+              dispatch(
+                toAnalysisMode({
+                  analysisStat: {
+                    ...allInfo,
+                    sessionId: ret.data.data.id,
+                    courseId,
+                  },
+                  analysisTime: Math.floor(+new Date() / 1000),
+                })
+              );
+            })();
+          }}
+        >
+          시작 <RightArrow />
+        </AnalysisButton>
+      )}
+      {!clickable && mine && (
+        <AnalysisButton
+          color="white"
+          disabled={true}
+          style={{ cursor: "auto", position: "relative" }}
+        >
+          <LoadingAnim top="-25px" left="-2px" />
+        </AnalysisButton>
+      )}
+      {!clickable && !mine && (
+        <AnalysisButton color="white" disabled={true}>
+          시작 <RightArrow />
+        </AnalysisButton>
+      )}
+      {status === APIstatus.DONE && <div>이미분석중임.</div>}
+    </>
+  );
+};
+
 export default function ManageLectureContent(): JSX.Element {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState<APIstatus>(APIstatus.IDLE);
+  const [status, setStatus] = useState<APIstatus>(APIstatus.IDLE); // 목록 로딩하는거 status
+  const [clickable, setClickable] = useState(true);
   const { accountInfo } = useSelector((state: RootState) => state.account);
   const { mode } = useSelector((state: RootState) => state.global);
   const [data, setData] = useState<IResponseGetTeacherCourses>({
     message: "",
     data: [],
   });
+
   const getTeacherCourses = useCallback(async () => {
-    // TODO 서버에 학생이 수강중인 강의 목록을 저장하고 보여주는 API가 없어서 클라이언트가 그때그때 추가하도록 하려고 여기에 추가함.
-    // 이 때 강의자는 무조건 13번임 (고정)
-    // const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id });
-    const ret = await getTeahcerCoursesAPI({ accountId: 13 });
-    setStatus(APIstatus.DONE);
-    setData(ret.data);
-  }, []);
+    if (accountInfo.mode == "teacher") {
+      const ret = await getTeahcerCoursesAPI({ accountId: accountInfo.id }); // 13
+      console.log(ret.data.data);
+      setStatus(APIstatus.DONE);
+      setData(ret.data);
+    } else {
+      // 학생 (데이터 모킹)
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve();
+        }, 500)
+      );
+      setStatus(APIstatus.DONE);
+      // 어카운트 아이디는 아마 과목 넘버일 것이다..
+      setData({
+        message: "강의 목록을 성공적으로 불러왔습니다.",
+        data: [
+          { name: "멍멍이와 야옹이", accountId: 1, code: "381901" },
+          { name: "멍멍이와 야옹이", accountId: 2, code: "778964" },
+          { name: "멍멍이와 야옹이", accountId: 3, code: "666659" },
+          { name: "법과 사회", accountId: 4, code: "684924" },
+          { name: "주먹과 법", accountId: 14, code: "469929" },
+          { name: "법보다 주먹이 가깝다", accountId: 15, code: "500210" },
+          { name: "안녕!", accountId: 16, code: "671590" },
+          { name: "마지막 잎새", accountId: 17, code: "250266" },
+          { name: "추가됨", accountId: 18, code: "066447" },
+          { name: "법과 불주먹", accountId: 19, code: "956276" },
+          { name: "멍멍이와 야옹이", accountId: 20, code: "061501" },
+          { name: "멍멍이와 야옹이", accountId: 21, code: "916546" },
+          { name: "멍멍이와 야옹이", accountId: 22, code: "954658" },
+        ],
+      });
+    }
+  }, [accountInfo]);
   // 강의 리스트를 가져온다.
   useEffect(() => {
-    // TODO 학생이 수강중인 강의 목록을 가져오거나 추가하는 API가 없어서 IF문 BYPASS
-    if (1 === 1 || accountInfo.mode === "teacher") {
-      try {
-        setStatus(APIstatus.PENDING);
-        getTeacherCourses();
-      } catch (e) {
-        console.error("에러:", e);
-        setStatus(APIstatus.ERROR);
-      }
-    } else {
-      //
+    try {
+      setStatus(APIstatus.PENDING);
+      getTeacherCourses();
+    } catch (e) {
+      console.error("에러:", e);
+      setStatus(APIstatus.ERROR);
     }
   }, [accountInfo.mode, getTeacherCourses]);
   return (
@@ -155,34 +251,35 @@ export default function ManageLectureContent(): JSX.Element {
             총 {data.data.length}개의 강의가 있습니다.
           </div>
           <UL>
-            {data.data.reverse().map((x, i) => {
-              return (
-                <LI key={"lect-" + i}>
-                  <LIChild>{"[" + x.code + "] " + x.name}</LIChild>
-                  {accountInfo.mode === "teacher" && mode === "normal" && (
+            {data.data
+              .slice()
+              .reverse()
+              .map((x, i) => {
+                return (
+                  <LI key={"lect-" + i}>
                     <LIChild>
-                      <AnalysisButton
-                        color="white"
-                        onClick={() => {
-                          dispatch(
-                            toAnalysisMode({
-                              analysisStat: x,
-                              analysisTime: Math.floor(+new Date() / 1000),
-                            })
-                          );
-                        }}
-                      >
-                        시작 <RightArrow />
-                      </AnalysisButton>
+                      {"[" + x.code + " / " + x.accountId + "] " + x.name}
                     </LIChild>
-                  )}
-                  <LIChild>{new Date().toLocaleDateString()}</LIChild>
-                  <LIChild>
-                    <SettingIcon />
-                  </LIChild>
-                </LI>
-              );
-            })}
+                    {accountInfo.mode === "teacher" && mode === "normal" && (
+                      <LIChild>
+                        <ButtonWrapper
+                          allInfo={x}
+                          courseId={x.accountId}
+                          status={
+                            mode === "normal" ? APIstatus.IDLE : APIstatus.DONE
+                          }
+                          clickable={clickable}
+                          setClickable={setClickable}
+                        />
+                      </LIChild>
+                    )}
+                    <LIChild>{new Date().toLocaleDateString()}</LIChild>
+                    <LIChild>
+                      <SettingIcon />
+                    </LIChild>
+                  </LI>
+                );
+              })}
           </UL>
         </>
       )}

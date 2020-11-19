@@ -6,6 +6,8 @@ interface GlobalState {
     name: string;
     accountId: number;
     code: string;
+    sessionId: number;
+    courseId: number;
   };
   analysisTime: number; // 분석 시작 시간.
   // 강의 id, 진행자 등 여러 가지를 넣어야 합니다.
@@ -28,6 +30,8 @@ const globalStateSlice = createSlice({
           name: string;
           accountId: number;
           code: string;
+          sessionId: number;
+          courseId: number;
         };
         analysisTime: number;
       }>

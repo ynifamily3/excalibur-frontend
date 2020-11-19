@@ -1,4 +1,5 @@
 import Button from "components/atoms/Button";
+import { LoadingAnim } from "components/atoms/LoadingAnim";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
 import Email from "components/atoms/svg/Email";
