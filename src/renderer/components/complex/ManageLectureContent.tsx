@@ -300,18 +300,18 @@ export default function ManageLectureContent(): JSX.Element {
               .map((x, i) => {
                 let memoedIndex = -1;
                 if (accountInfo.mode === "student" && mode === "normal") {
-                  memoedIndex = isActiveCourse(x.accountId);
+                  memoedIndex = isActiveCourse(x.id);
                 }
                 return (
                   <LI key={"lect-" + i}>
                     <LIChild>
-                      {"[" + x.code + " / " + x.accountId + "] " + x.name}
+                      {"[" + x.code + " / " + x.id + "] " + x.name}
                     </LIChild>
                     {accountInfo.mode === "teacher" && mode === "normal" && (
                       <LIChild>
                         <ButtonWrapper
                           allInfo={x}
-                          courseId={x.accountId}
+                          courseId={x.id}
                           status={
                             mode === "normal" ? APIstatus.IDLE : APIstatus.DONE
                           }
@@ -329,7 +329,7 @@ export default function ManageLectureContent(): JSX.Element {
                             disabled={studentActivePending}
                             onClick={handleGoAnalysisButton({
                               name: x.name,
-                              courseId: x.accountId,
+                              courseId: x.id,
                               code: x.code,
                               sessionId: activated[memoedIndex].id,
                             })}

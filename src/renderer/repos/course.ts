@@ -9,6 +9,7 @@ type IRequestGetStudentCourses = IRequestGetTeacherCourses;
 interface IResponseGetTeacherCourses {
   message: string;
   data: {
+    id: number;
     name: string;
     accountId: number;
     code: string;

@@ -67,4 +67,35 @@ const pickQuiz = async ({
   );
 };
 
-export { getQuizzes, RGetQuizzes, createQuiz, IQuizElementC, pickQuiz };
+// {
+//   "message": "최신 퀴즈를 성공적으로 불러왔습니다.",
+//   "data": {
+//     "id": 8,
+//     "analysisSessionId": 70,
+//     "content": "이거 낼래",
+//     "example1": "아",
+//     "example2": "오",
+//     "example3": "이",
+//     "answer": 3,
+//     "isPick": 1
+//   }
+// }
+// 수강생이 퀴즈를 가져온다. 없으면 없는걸로..
+const receiveQuiz = async ({
+  analysisSessionId,
+}: {
+  analysisSessionId: number;
+}): Promise<AxiosResponse<RCreateQuiz>> => {
+  return axios.get(
+    `/analysis-sessions/${analysisSessionId}/quizzes/not-transmit`
+  );
+};
+
+export {
+  getQuizzes,
+  RGetQuizzes,
+  createQuiz,
+  IQuizElementC,
+  pickQuiz,
+  receiveQuiz,
+};

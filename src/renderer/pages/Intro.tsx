@@ -6,7 +6,6 @@ import Email from "components/atoms/svg/Email";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
 import Key from "components/atoms/svg/Key";
-import QuizModal from "components/complex/QuizModal";
 import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import { useLocalStorage } from "hooks/useLocalStorage";

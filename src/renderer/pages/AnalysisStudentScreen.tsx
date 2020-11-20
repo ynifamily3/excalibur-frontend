@@ -2,13 +2,23 @@ import Button from "components/atoms/Button";
 import { CameraBox } from "components/atoms/CameraBox";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
+import QuizModal from "components/complex/QuizModal";
+import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import { useCameraStream } from "hooks/useCamera";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IIsActive, isActive } from "repos/course";
 import { uploadStudentVideo } from "repos/file";
+import { receiveQuiz } from "repos/quiz";
 import { addDrowsnesses } from "repos/session";
 import { RootState } from "rootReducer";
 import { toAnalysisMode, toNormalMode } from "slices/globalStateSlice";
@@ -149,7 +159,7 @@ const AnalysisStudentScreen: FC = () => {
               videoData.current[0],
               video.duration * 1000,
               (fixedBlob: Blob) => {
-                console.log("!!", fixedBlob);
+                // console.log("!!", fixedBlob);
                 // saveBlob(URL.createObjectURL(fixedBlob), "test.mkv");
                 const fileOfBlob = new File(
                   [fixedBlob],
@@ -232,7 +242,70 @@ const AnalysisStudentScreen: FC = () => {
   }, [getActives]);
 
   // TODO 퀴즈도 있는지 감시합니다.
-  //
+  const { handleModal } = useContext(ModalContext);
+  const [watching, setWatching] = useState(true); // 퀴즈 내는 중에 퀴즈를 조회하지 않도록 와치포인트를 조절합니다.
+
+  const endQuiz = useCallback((isSelected: boolean, isAnswer: boolean) => {
+    setWatching(true);
+    console.log("퀴즈 창 끝남.", isSelected, isAnswer);
+    ipcRenderer.send("resizeWindow", {
+      width: 300,
+      height: 500,
+      animated: true,
+    });
+    ipcRenderer.send("positionWindow", { w: 300, h: 500 });
+  }, []);
+
+  const watchQuiz = useCallback(async () => {
+    const ret = await receiveQuiz({
+      analysisSessionId: analysisStat.sessionId,
+    });
+    if (ret.data.data === null) {
+      // 퀴즈가 없는 상태입니다.
+    } else {
+      // 퀴즈를 catch한 상태입니다.
+      setWatching(false);
+      // 창 크기를 조절합니다.
+      ipcRenderer.send("resizeWindow", {
+        width: 800,
+        height: 600,
+        animated: false,
+      });
+      ipcRenderer.send("centerWindow", { _w: 800, _h: 600 });
+
+      // 퀴즈 창을 띄웁니다.
+      handleModal(
+        <QuizModal
+          endHandler={endQuiz}
+          isAnswer={[
+            ret.data.data.answer === 1,
+            ret.data.data.answer === 2,
+            ret.data.data.answer === 3,
+          ]}
+          description={ret.data.data.content}
+          timeLimit={10 * 1000}
+          selections={[
+            ret.data.data.example1,
+            ret.data.data.example2,
+            ret.data.data.example3,
+          ]}
+        />
+      );
+    }
+  }, [analysisStat, handleModal, endQuiz]);
+  useEffect(() => {
+    watchQuiz();
+    const tickId = setInterval(() => {
+      if (watching === true) {
+        console.log("Watching");
+        watchQuiz();
+      }
+    }, 1000);
+    return () => {
+      clearInterval(tickId);
+    };
+  }, [watchQuiz, watching]);
+
   // TODO 이상한 프로세스를 감시합니다.
   // (async function () {
   //   const proc = JSON.parse(await ipcRenderer.invoke("getProcessList"));
