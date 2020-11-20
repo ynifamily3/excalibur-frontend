@@ -40,6 +40,10 @@ const uiSlice = createSlice({
     changeDashboardPage(state, action: PayloadAction<CurrentDashboardPage>) {
       state.currentDashboardPage = action.payload;
     },
+    reset(state) {
+      state.isTransparent = initialState.isTransparent;
+      state.currentDashboardPage = initialState.currentDashboardPage;
+    },
   },
 });
 
@@ -47,5 +51,6 @@ export const {
   setTransparentAction,
   setNoTransparentAction,
   changeDashboardPage,
+  reset,
 } = uiSlice.actions;
 export default uiSlice.reducer;

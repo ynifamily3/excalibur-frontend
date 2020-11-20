@@ -13,6 +13,9 @@ const Button = styled.button<{ color?: string }>`
   &:active {
     transform: translateY(1px);
   }
+  &:disabled {
+    opacity: 0.5;
+  }
 `;
 
 export const Buttontest: React.FC<StyledComponentProps<

@@ -1,5 +1,5 @@
 import { ModalContext } from "contexts/modalContext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { QuizModalProps } from "types/components/complex/QuizModal";
 
@@ -94,9 +94,10 @@ const Selection = styled.li`
 export default function QuizModal(
   props: React.PropsWithChildren<QuizModalProps>
 ): JSX.Element {
-  const { timeLimit, description, isAnswer, selections } = props;
+  const { timeLimit, description, isAnswer, selections, endHandler } = props;
   const { handleModal } = React.useContext(ModalContext);
   const [currentTime, setCurrentTime] = useState(timeLimit);
+  const selected = useRef<number>(-1);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -112,10 +113,14 @@ export default function QuizModal(
   useEffect(() => {
     if (currentTime === 0) {
       setTimeout(() => {
+        if (endHandler) {
+          if (selected.current === -1) endHandler(false, false);
+          else endHandler(true, isAnswer[selected.current - 1]);
+        }
         handleModal(); // 모달 꺼지게 만듦
       }, 300);
     }
-  }, [handleModal, currentTime]);
+  }, [handleModal, currentTime, endHandler, isAnswer]);
 
   return (
     <QuizWrapper start={currentTime !== 0 ? 1 : 0}>
@@ -132,6 +137,7 @@ export default function QuizModal(
             <Selection
               key={"QuizSelection-" + i}
               onClick={() => {
+                selected.current = i + 1;
                 setCurrentTime(0);
               }}
             >

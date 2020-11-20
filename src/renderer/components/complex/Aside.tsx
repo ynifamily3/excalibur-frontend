@@ -1,12 +1,14 @@
-import AnalysisButton from "components/atoms/AnlysisButton";
+// import AnalysisButton from "components/atoms/AnlysisButton";
 import Button from "components/atoms/Button";
 import Back from "components/atoms/svg/Back";
 import AsideStats from "components/complex/AsideStats";
 import ExitAnalysisButton from "components/complex/ExitAnalysisButton";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { APIstatus } from "repos";
+import { closeSession } from "repos/session";
 import { RootState } from "rootReducer";
-import { toAnalysisMode, toNormalMode } from "slices/globalStateSlice";
+import { toNormalMode } from "slices/globalStateSlice";
 import { changeDashboardPage } from "slices/uiSlice";
 import styled from "styled-components";
 import color from "styles/color";
@@ -71,13 +73,31 @@ Menu.defaultProps = {
 
 export default function Aside(): JSX.Element {
   const { accountInfo } = useSelector((state: RootState) => state.account);
-  const { mode } = useSelector((state: RootState) => state.global);
+  const { mode, analysisStat } = useSelector(
+    (state: RootState) => state.global
+  );
   const { currentDashboardPage } = useSelector((state: RootState) => state.ui);
 
   const [fold, setFold] = useState(false);
 
+  const [isPending, setIsPending] = useState(false);
+
   const dispatch = useDispatch();
+
+  const closeSessionAPICall = useCallback(async () => {
+    if (!analysisStat) return;
+    setIsPending(true);
+    const ret = await closeSession({
+      courseId: analysisStat.courseId,
+      analysisSessionId: analysisStat.sessionId,
+    });
+    console.log(ret.data);
+    setIsPending(false);
+    dispatch(toNormalMode());
+  }, [analysisStat, dispatch]);
+
   if (accountInfo.mode == "student" && mode == "analysis") return <></>;
+
   return (
     <Wrapper isFold={fold}>
       <Menus>
@@ -91,21 +111,16 @@ export default function Aside(): JSX.Element {
           {/* 공통 */}
         </Menu>
         <Menu
-          selected={currentDashboardPage === "managequiz"}
-          onClick={() => {
-            dispatch(changeDashboardPage("managequiz"));
-          }}
-        >
-          {fold ? "Q" : "퀴즈 관리"}
-          {/* 강의자 */}
-        </Menu>
-        <Menu
-          selected={currentDashboardPage === "managelecture"}
+          selected={
+            currentDashboardPage === "managelecture" ||
+            currentDashboardPage === "addnewlecture" ||
+            currentDashboardPage === "addnewlecturestudent"
+          }
           onClick={() => {
             dispatch(changeDashboardPage("managelecture"));
           }}
         >
-          {fold ? "L" : "내 강의 관리"}
+          {fold ? "L" : "내 강의"}
           {/* 공통 */}
         </Menu>
         <Menu
@@ -114,32 +129,31 @@ export default function Aside(): JSX.Element {
             dispatch(changeDashboardPage("listlectureanalysis"));
           }}
         >
-          {fold ? "A" : "강의분석 기록 목록"}
+          {fold ? "A" : "강의분석 기록"}
           {/* 공통 */}
         </Menu>
-        <Menu
-          selected={currentDashboardPage === "test"}
-          onClick={() => {
-            dispatch(changeDashboardPage("test"));
-          }}
-        >
-          {fold ? "T" : "테스트"}
-        </Menu>
+        {/* {accountInfo.mode === "student" && (
+          <Menu
+            selected={currentDashboardPage === "test"}
+            onClick={() => {
+              dispatch(changeDashboardPage("test"));
+            }}
+          >
+            {fold ? "T" : "분석테스트"}
+          </Menu>
+        )} */}
+        {accountInfo.mode == "teacher" && mode === "analysis" && (
+          <Menu
+            selected={currentDashboardPage === "managequiz"}
+            onClick={() => {
+              dispatch(changeDashboardPage("managequiz"));
+            }}
+          >
+            {fold ? "Q" : "✅퀴즈 출제✅"}
+            {/* 강의자 */}
+          </Menu>
+        )}
       </Menus>
-      {accountInfo.mode == "teacher" &&
-        (mode === "normal" ? (
-          <AnalysisButton
-            onClick={() => {
-              dispatch(toAnalysisMode());
-            }}
-          />
-        ) : (
-          <ExitAnalysisButton
-            onClick={() => {
-              dispatch(toNormalMode());
-            }}
-          />
-        ))}
       <Button
         style={{
           border: "none",
@@ -160,6 +174,9 @@ export default function Aside(): JSX.Element {
       >
         <Back />
       </Button>
+      {accountInfo.mode == "teacher" && mode === "analysis" && !isPending && (
+        <ExitAnalysisButton isFold={fold} onClick={closeSessionAPICall} />
+      )}
       <AsideStats isFold={fold} />
     </Wrapper>
   );

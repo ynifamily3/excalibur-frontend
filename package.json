@@ -20,7 +20,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./assets/excalibur.ico"
+        "icon": "./assets/icons/mac/icon.icns"
       },
       "makers": [
         {
@@ -58,7 +58,9 @@
                   "name": "main_window"
                 }
               ]
-            }
+            },
+            "port": 3000,
+            "loggerPort": 9090
           }
         ]
       ]
@@ -104,6 +106,7 @@
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
     "@reduxjs/toolkit": "^1.4.0",
+    "@types/dom-mediacapture-record": "^1.0.7",
     "@types/prop-types": "^15.7.3",
     "@types/query-string": "^6.3.0",
     "@types/react": "^16.9.49",
@@ -115,6 +118,7 @@
     "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
+    "get-blob-duration": "^1.1.2",
     "immer": "^7.0.14",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",

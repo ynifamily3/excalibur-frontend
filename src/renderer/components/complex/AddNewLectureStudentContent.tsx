@@ -1,15 +1,17 @@
-import React, { PropsWithChildren } from "react";
-import Select from "components/atoms/Select";
-
-import { RootState } from "rootReducer";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import theme from "styles/theme";
+import BackButton from "components/atoms/BackButton";
 import Button from "components/atoms/Button";
-import SettingIcon from "components/atoms/svg/Setting";
-import color from "styles/color";
-import Caution from "components/atoms/svg/Caution";
 import Novalid from "components/atoms/Novalid";
+import Select from "components/atoms/Select";
+import Caution from "components/atoms/svg/Caution";
+import SettingIcon from "components/atoms/svg/Setting";
+import React, { PropsWithChildren, useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerStudentCourse } from "repos/course";
+import { RootState } from "rootReducer";
+import { changeDashboardPage } from "slices/uiSlice";
+import styled from "styled-components";
+import color from "styles/color";
+import theme from "styles/theme";
 
 const Wrapper = styled.div`
   padding: 44px;
@@ -45,10 +47,41 @@ const Underline = styled.div`
 `;
 
 export default function AddNewLectureStudentContent(): JSX.Element {
+  const dispatch = useDispatch();
+  const [code, setCode] = useState("");
+  const [noValid, setNoValid] = useState(false);
+  const { accountInfo } = useSelector((state: RootState) => state.account);
+  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCode(e.target.value);
+  };
+  const APICall = useCallback(async () => {
+    try {
+      const ret = await registerStudentCourse({
+        accountId: accountInfo.id,
+        code,
+      });
+      console.log(ret);
+      dispatch(changeDashboardPage("managelecture"));
+    } catch (e) {
+      console.log("에러:", e);
+      setNoValid(true);
+    }
+  }, [code, accountInfo.id, dispatch]);
   return (
     <Wrapper>
-      <div style={{ fontSize: theme.size.h2, marginBottom: "44px" }}>
-        &lt; 새 강의 추가
+      <div
+        style={{
+          fontSize: theme.size.h2,
+          marginBottom: "44px",
+          display: "flex",
+        }}
+      >
+        <BackButton
+          onClick={() => {
+            dispatch(changeDashboardPage("managelecture"));
+          }}
+        />{" "}
+        새 강의 추가
       </div>
       <div style={{ width: "100%", marginLeft: 44 }}>
         새 강의를 추가하려면, 강의자가 전달한 초대 URL로 접속하세요.
@@ -57,7 +90,12 @@ export default function AddNewLectureStudentContent(): JSX.Element {
         또는, 아래에 직접 초대 코드를 입력하세요.
       </div>
       <CODEWrapper>
-        <CODEINPUT type="text" maxLength={6} placeholder={"000000"} />
+        <CODEINPUT
+          type="text"
+          maxLength={6}
+          placeholder={"000000"}
+          onChange={changeHandler}
+        />
         <Underline order={-10} />
         <Underline order={70} />
         <Underline order={150} />
@@ -65,13 +103,19 @@ export default function AddNewLectureStudentContent(): JSX.Element {
         <Underline order={310} />
         <Underline order={390} />
       </CODEWrapper>
+
       <Novalid>
-        <Caution color={"rgb(245, 87, 93)"} />
-        &nbsp;초대 코드가 유효하지 않습니다.
+        {noValid && (
+          <>
+            <Caution color={"rgb(245, 87, 93)"} />
+            &nbsp;초대 코드가 유효하지 않습니다.
+          </>
+        )}
       </Novalid>
 
       <Button
         color="white"
+        onClick={APICall}
         style={{
           backgroundColor: "#032D3C",
           borderRadius: 0,

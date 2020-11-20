@@ -1,6 +1,6 @@
+import { ModalContext } from "contexts/modalContext";
 import React from "react";
 import ReactDOM from "react-dom";
-import { ModalContext } from "contexts/modalContext";
 import styled from "styled-components";
 
 const Backdrop = styled.div`

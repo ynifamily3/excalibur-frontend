@@ -1,6 +1,6 @@
 import styled from "styled-components";
-
 import { HoverTypes } from "types/App";
+
 const Hover = styled.div`
   position: fixed;
   top: ${(props: HoverTypes) => (props.top ? props.top : "0.7em")};

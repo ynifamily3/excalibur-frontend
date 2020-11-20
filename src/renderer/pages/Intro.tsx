@@ -1,14 +1,19 @@
 import Button from "components/atoms/Button";
+import { LoadingAnim } from "components/atoms/LoadingAnim";
 import Novalid from "components/atoms/Novalid";
 import Caution from "components/atoms/svg/Caution";
 import Email from "components/atoms/svg/Email";
 import ExcaliburLogo from "components/atoms/svg/ExcaliburLogo";
 import GoogleLogo from "components/atoms/svg/GoogleLogo";
 import Key from "components/atoms/svg/Key";
+import { ModalContext } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
-import React, { useEffect, useState } from "react";
+import { useLocalStorage } from "hooks/useLocalStorage";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { setAccessToken } from "repos";
+import { signIn } from "repos/account";
 import { RootState } from "rootReducer";
 import { signInAction } from "slices/accountSlice";
 import styled from "styled-components";
@@ -68,11 +73,19 @@ export default function Intro(): JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
   const { isLogin } = useSelector((state: RootState) => state.account);
+  const { handleModal } = useContext(ModalContext);
   const [invalidNumber, setInvalidNumber] = useState(0);
+  const [isPending, setIsPending] = useState(false);
   const [formInput, setFormInput] = useState({
-    email: "jongkeun.ch@gmail.com",
+    email: "jongkeun.ch_@gmail.com",
     password: "1q2w3e4r!",
   });
+
+  // refresh Token을 가져온다.
+  const [savedRefreshToken, setSavedRefreshToken] = useLocalStorage(
+    "refreshToken",
+    ""
+  );
 
   useEffect(() => {
     ipcRenderer.send("resizeWindow", {
@@ -86,10 +99,10 @@ export default function Intro(): JSX.Element {
     if (isLogin) history.replace("/dashboard");
   }, [isLogin, history]);
 
-  function handleFormChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFormChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormInput({
       ...formInput,
-      [event.target.name]: event.currentTarget.value,
+      [e.target.name]: e.currentTarget.value,
     });
   }
 
@@ -101,33 +114,63 @@ export default function Intro(): JSX.Element {
 
   function handleLoginButton() {
     // NOTE 로그인 시도에 실패하였을 때 보여줌.
-    setInvalidNumber((inv) => inv + 1);
-
-    // NOTE debug 목적입니다.
-    if (confirm("학생으로 로그인하시겠습니까?")) {
-      dispatch(
-        signInAction({
-          email: formInput.email,
-          mode: "student",
-          password: formInput.password,
-        })
-      );
-    } else {
-      dispatch(
-        signInAction({
-          email: formInput.email,
-          mode: "teacher",
-          password: formInput.password,
-        })
-      );
-    }
+    if (isPending) return;
+    setIsPending(true);
+    (async function () {
+      try {
+        const rtn = await signIn(formInput);
+        const {
+          accessToken,
+          refreshToken,
+          id,
+          name,
+          email,
+          role,
+          type,
+        } = rtn.data.data;
+        console.log(
+          "%c" + accessToken + " id: " + id,
+          "background:#222; color:#bada55"
+        );
+        setAccessToken(accessToken); // axios 설정을 바꿈.
+        setSavedRefreshToken(refreshToken); // 로컬스토리지에 저장됨.
+        dispatch(signInAction({ email, id, mode: role, name, type }));
+      } catch (error) {
+        console.error("에러:", error);
+        setInvalidNumber((inv) => inv + 1);
+      } finally {
+        setIsPending(false);
+      }
+    })();
   }
 
   return (
     <Wrapper>
-      <div style={{ marginLeft: "-50px" }}>
+      <div>
         <ExcaliburLogo />
       </div>
+      {/* <div>
+        <Button
+          onClick={() => {
+            handleModal(
+              <QuizModal
+                isAnswer={[false, true, false]}
+                description={"1형식은 주어와 _______ 로 구분되어 있다."}
+                timeLimit={10 * 1000}
+                selections={["1. 형용사", "2. 동사", "3. 관사"]}
+              />
+            );
+          }}
+          color="red"
+          style={{
+            width: "auto",
+            paddingTop: "1em",
+            paddingBottom: "1em",
+          }}
+        >
+          ⚡ 퀴즈 팝업 보기 ⚡ listen
+        </Button>
+      </div> */}
       <LoginForm>
         <LoginInputWrapper>
           <div style={{ position: "absolute", left: 10, top: 10 }}>
@@ -167,17 +210,20 @@ export default function Intro(): JSX.Element {
           color="white"
           style={{
             backgroundColor: "#032D3C",
+            opacity: `${isPending ? 0.5 : 1}`,
             width: "100%",
             margin: 0,
             border: "none",
             height: "47px",
             borderRadius: 0,
           }}
+          disabled={isPending}
           onClick={handleLoginButton}
         >
-          로그인
+          {!isPending ? "로그인" : "로그인 중..."}
         </Button>
         <Button
+          disabled={true}
           color="#032D3C"
           style={{
             display: "flex",

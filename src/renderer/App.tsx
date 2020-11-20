@@ -9,13 +9,14 @@ import Titlebar from "components/restricted/Titlebar";
 import { ModalProvider } from "contexts/modalContext";
 import { ipcRenderer } from "electron";
 import WaitingComponent from "hocs/WaitingComponent";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import { useSelector } from "react-redux";
 import { HashRouter, Route } from "react-router-dom";
 import { RootState } from "rootReducer";
 
 import { routes } from "./routes";
+
 const Intro = React.lazy(() => import("pages/Intro"));
 
 function App() {

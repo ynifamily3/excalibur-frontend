@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import theme from "styles/theme";
 import SettingIcon from "components/atoms/svg/Setting";
-import { RootState } from "rootReducer";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { RootState } from "rootReducer";
+import styled from "styled-components";
+import theme from "styles/theme";
 
 const Wrapper = styled.div<{ isFold: boolean }>`
   background-color: #e7e8eb;

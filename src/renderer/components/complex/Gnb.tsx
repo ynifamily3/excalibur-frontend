@@ -35,7 +35,7 @@ export default function Gnb(props: IGnbProps): JSX.Element {
 
   const { mode } = useSelector((state: RootState) => state.global);
 
-  if (accountInfo.mode == "student" && mode == "analysis") return <></>;
+  if (accountInfo?.mode == "student" && mode == "analysis") return <></>;
 
   return (
     <Wrapper>
